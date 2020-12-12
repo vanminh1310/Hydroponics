@@ -15,28 +15,28 @@
             <div class="divselection">
               
                   <select  name="tree" id="T" onchange="showw()">
-                  <option disabled selected >Cây Trồng</option>
-                  <option value="T1">Dâu tây</option>
-                  <option value="T2">Rau xà lách</option>
-                  <option value="T3">Rau cải</option>
-                  <option value="T4">Cà chua</option>
-                  <option value="T5">Rau tía tô</option>
+                  <option disabled selected value="t">Cây Trồng</option>
+                  <option value="DT">Dâu tây</option>
+                  <option value="XL">Rau xà lách</option>
+                  <option value="RC">Rau cải</option>
+                  <option value="CC">Cà chua</option>
+                  <option value="TT">Rau tía tô</option>
                   </select>
           
             </div>
             <div class="information">
                   <h3 class="textinfor">Thông tin cơ bản </h3>
                   <div style="display: flex;" class="name1">
-                        <p>Tên gọi:<strong></strong></p>
-                        <p class="p1">Nhiệt độ phát triển: <strong></strong></p>
+                        <p>Tên gọi:<strong id="name"></strong></p>
+                        <p class="p1">Nhiệt độ phát triển: <strong id="T1"></strong></p>
                   </div>
                   <div style="display: flex;" class="name2">
-                        <p>Độ PH:<strong></strong></p>
-                        <p class="p2">Độ ẩm: <strong></strong></p>
+                        <p>Độ PH:<strong id="PH"></strong></p>
+                        <p class="p2">Độ ẩm: <strong id="DA"></strong></p>
                   </div>
                   <div style="display: flex;" class="name3">
-                        <p>Ánh sáng:<strong></strong></p>
-                        <p class="p3">Thời gian phát triển: <strong></strong></p>
+                        <p>Ánh sáng:<strong id="AS"></strong></p>
+                        <p class="p3">Thời gian phát triển: <strong id="Time"></strong></p>
                   </div>
 
 
@@ -55,6 +55,10 @@
 
 
       </div>
-      
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+<script src="/web/js/home.js"></script>
 </body>
 </html>

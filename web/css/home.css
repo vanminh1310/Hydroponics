@@ -45,13 +45,13 @@ select{
      margin: 10px;
 }
 .p1{
-      margin-left:200px;
+      margin-left:125px;
 }
 .p2{
-      margin-left:205px;
+      margin-left:155px;
 }
 .p3{
-      margin-left:185px;
+      margin-left:135px;
 }
 
 .textinfor{
@@ -114,5 +114,8 @@ select{
 .btn_auto:active {
 	position:relative;
 	top:1px;
+}
+strong{
+      color: #4391f0;
 }
         

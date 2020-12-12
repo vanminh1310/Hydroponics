@@ -1,12 +1,13 @@
 
-  var firebaseConfig = {
-      apiKey: "AIzaSyArTE_49kNYvXSVeI3S54mkwPA-P4ZvWrM",
-      authDomain: "hydroponic-7b19c.firebaseapp.com",
-      projectId: "hydroponic-7b19c",
-      storageBucket: "hydroponic-7b19c.appspot.com",
-      messagingSenderId: "279353770869",
-      appId: "1:279353770869:web:d85be35a8e7d81ab4fc93c",
-      measurementId: "G-ND5XK9RQ6J"
+    var firebaseConfig = {
+      apiKey: "AIzaSyCNMHSlvUOgSTrFr-0HbGMaIE7IFRwbzjA",
+      authDomain: "iot59tdh.firebaseapp.com",
+      databaseURL: "https://iot59tdh-default-rtdb.firebaseio.com",
+      projectId: "iot59tdh",
+      storageBucket: "iot59tdh.appspot.com",
+      messagingSenderId: "773261677026",
+      appId: "1:773261677026:web:0a3207a929d48c44efe9bb",
+      measurementId: "G-Z5YTNQ2CG2"
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
