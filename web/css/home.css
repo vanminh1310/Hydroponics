@@ -18,7 +18,7 @@ body {
       margin-top: 10px;
 
       place-items: center;
-      border:1px solid black;
+      border:1px solid #4391f0;
       border-radius: 20px;
       
       
@@ -27,7 +27,7 @@ body {
 .divselection{
       margin-top: 10px;
  
-      margin-left: 185px;
+      margin-left: 155px;
       /* columns: #333333;
       background-color: #eeeeee;
 
@@ -38,9 +38,8 @@ body {
 select{
       padding:8px 12px;
       columns: #333333;
-      background-color: #eeeeee;
-
-      border: 1px solid #dddddd;
+      background-color: white;
+      border: 1px solid #4391f0;
       cursor: pointer;
       border-radius: 5px;
      margin: 10px;
@@ -67,3 +66,53 @@ select{
 .name3{
       margin-left: 15px;
 }
+.text1{
+      margin-bottom: 40px;
+      margin-left: 36px;
+
+}
+.btn_mn {
+	background-color:transparent;
+	border-radius:17px;
+	border:1px solid #4391f0;
+	display:inline-block;
+	cursor:pointer;
+	color:#333333;
+	font-family:Arial;
+	font-size:17px;
+	
+	padding:13px 38px;
+      text-decoration:none;
+      margin-left: 25px;
+	
+}
+.btn_mn:hover {
+	background-color:transparent;
+}
+.btn_mn:active {
+	position:relative;
+	top:1px;
+}
+.btn_auto {
+	background-color:transparent;
+	border-radius:17px;
+	border:1px solid #4391f0;
+	display:inline-block;
+	cursor:pointer;
+	color:#333333;
+	font-family:Arial;
+	font-size:17px;
+	
+	padding:13px 38px;
+      text-decoration:none;
+      margin-left: 180px;
+	
+}
+.btn_auto:hover {
+	background-color:transparent;
+}
+.btn_auto:active {
+	position:relative;
+	top:1px;
+}
+        
