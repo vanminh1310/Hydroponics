@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/web/css/dash.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  </head>
+  <body>
+      <div class="navbar navbar_3">
+            <div class="navbar_left">
+              <div class="logo">Hydroponic <span>Joy</span></div>
+              <ul class="menu">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <!-- <li><a href="#">Contact</a></li>
+                <li><a href="#">Services</a></li> -->
+                <li><a href="#">Profile</a></li>
+              </ul>
+            </div>
+            <div class="navbar_right">
+              <ul>
+                <li><a href="#">Notifications</a></li>
+                <li><a href="#" onclick="logout()" >Logout</a></li>
+              </ul>
+            </div>
+          </div>
+
+            <div class="NLMT">
+                  <span>Năng lượng mặt trời</span>
+
+            </div>
+            <div class="KR">
+                  <span>Khoang trồng rau</span>
+
+            </div>
+            <div class="BC">
+                  <span>Bể cá</span>
+
+            </div>
+
+            <div id="modal_ecall" class="modal_ecall">
+                  <div class="modal_content_ecall">
+                  <div class="modal_body_ecall">
+                        <h1 style="color: red;" class="tb">Thông báo <i class="fas fa-exclamation"></i>  </h1>
+                        <!-- <img class="img" src="img/warring.png"> -->
+                        <br>
+                        <h3>Dường như bạn chưa đăng nhập</h3> 
+                        <h3>Hãy đăng nhập để tiếp tục nhé!</h3>
+                  </div>   
+                  <div class="btn_ecall">
+                        <button id="bnt1" onclick="window.open('index.html','_self')" class="btn1">Đăng nhập</button>
+                  </div>
+                  </div>
+                  </div>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+      <script src="/web/js/dash.js"></script>
+
+  </body>
+</html>
+                           
