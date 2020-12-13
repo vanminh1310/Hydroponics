@@ -12,6 +12,35 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
+    function logout(){
+      firebase.auth().signOut();
+      window.open('index.html','_self')
+    }
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed 
+      var user = firebase.auth().currentUser;
+  
+      if(user != null){
+  
+        var email_id = user.email;
+        console.log(email_id)
+        alert("Chào mừng bạn: "+email_id)
+        document.getElementById('modal_ecall').style.display='none'
+      }
+  
+    } else {
+         document.getElementById('modal_ecall').style.display='block'
+      // No user is signed in.
+  
+   
+  
+    }
+  });
+
+
+
+
 
 function showw(){
 var read = document.getElementById('T').value

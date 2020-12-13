@@ -24,6 +24,8 @@
         
        login.then(function (_result) {
          window.location.replace('home.html');
+         console.log("tesst")
        })
      
       }
+      
