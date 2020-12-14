@@ -25,7 +25,7 @@
   
         var email_id = user.email;
         console.log(email_id)
-        alert("Chào mừng bạn: "+email_id)
+       
         document.getElementById('modal_ecall').style.display='none'
       }
   
@@ -37,3 +37,21 @@
   
     }
   });
+
+// box
+const gaugeElement = document.querySelector(".gauge");
+
+function setGaugeValue(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill").style.transform = `rotate(${
+    value/200
+  }turn)`;
+  
+  
+  gauge.querySelector(".gauge__cover").textContent = `${(value)}%`;
+}
+
+setGaugeValue(gaugeElement, 60.5);
