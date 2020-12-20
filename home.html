@@ -5,8 +5,11 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Welcome</title>
       <link rel="stylesheet" href="/web/css/home.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+      <link rel="stylesheet" href="/web/css/nf.css">
 </head>
 <body>
+      
       <div class="divbig">
             <div class="text1"><h3 style="margin-left: 35px;">Chào mừng đến với Hydroponic Joy </h3> 
                   <h3>Hãy lựa chọn loại rau củ bạn muốn trồng nhé!</h3>
@@ -43,7 +46,7 @@
             </div>
             <div>
                   <h3 style="margin-left: 128px;">Chọn cách thức chăm sóc</h3>
-                  <div style="display: flex;" class="btn">
+                  <div style="display: flex;" class="btn3">
                         <button onclick="window.open('dashboad.html','_self')" class="btn_mn">Manual</button>
                         <button onclick="window.open('dashboad.html','_self')" class="btn_auto">Auto</button>
 
@@ -73,6 +76,10 @@
             </div>
             </div>
             </div>
+           
+            <div id="toast"></div>
+
+                <script src="/web/js/nf.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
