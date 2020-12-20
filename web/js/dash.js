@@ -55,7 +55,7 @@ function setGaugeValue(gauge, value) {
   gauge.querySelector(".gauge__cover").textContent = `${(value)}%`;
 }
 
-setGaugeValue(gaugeElement, 60.5);
+setGaugeValue(gaugeElement, 10);
 
 
 function toast({ title = "", message = "", type = "info", duration = 3000 }) {

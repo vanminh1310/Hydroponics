@@ -29,7 +29,10 @@ ul li a {
   border-radius: 3px;
   position: fixed;
   top: 0;
+  /* them vo cho no de len cac thuoc tinh khac */
+  z-index: 1;
 }
+
 
 ul.menu,
 ul.social_items {
