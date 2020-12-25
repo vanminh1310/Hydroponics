@@ -21,7 +21,7 @@ ul li a {
 }
 
 .navbar {
-  width: 100%;
+  width: 100vw;
   
   height: 60px;
   background: #fff;
@@ -144,7 +144,7 @@ ul.social_items {
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgba(0,0,0.5,0.9); /* Black w/ opacity */
   
 }
 .modal_content_ecall{
@@ -198,7 +198,7 @@ top:1px;
     
 
 .gauge {
-margin-left: 25vw;
+margin-left: 10vw;
   width: 10vw;
   max-width: 250px;
   font-family: "Roboto", sans-serif;
@@ -247,6 +247,7 @@ margin-left: 25vw;
   justify-content: center;
   padding-bottom: 25%;
   box-sizing: border-box;
+  font-size: 10px;
 }
 
 #containercircle {
@@ -254,3 +255,300 @@ margin-left: 25vw;
   width: 200px;
   height: 100px;
 }
+.gauge__fill1 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: inherit;
+  height: 150%; 
+  /* sửa cái ở đây */
+  background:rgba(194, 37, 37, 0.87);
+  transform-origin: center top;
+  transform: rotate(0.25turn);
+  transition: transform 0.2s ease-out;
+}
+
+
+
+.gauge__cover1 {
+  width: 75%;
+  height: 150%;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Text */
+ display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 25%;
+  box-sizing: border-box;
+  font-size: 10px;
+}
+.gauge1 {
+  margin-left: 10vw;
+    width: 10vw;
+    max-width: 250px;
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    color: #004033;
+  
+  }
+  
+  /* ph */
+.gauge_ph {
+  margin-left: 5vw;
+    width: 10vw;
+    max-width: 250px;
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    color: #004033;
+  
+  }
+
+
+  .gauge__fill_ph{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: inherit;
+    height: 150%; 
+    /* sửa cái ở đây */
+    background:rgba(50, 223, 88, 0.87);
+    transform-origin: center top;
+    transform: rotate(0.25turn);
+    transition: transform 0.2s ease-out;
+  }
+  
+  
+  
+  .gauge__cover_ph {
+    width: 75%;
+    height: 150%;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+  
+    /* Text */
+   display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 25%;
+    box-sizing: border-box;
+    font-size: 10px;
+  }
+ /* do am */
+ .gauge_da {
+  margin-left: 5vw;
+    width: 10vw;
+    max-width: 250px;
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    color: #004033;
+  
+  }
+
+
+  .gauge__fill_da{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: inherit;
+    height: 150%; 
+    /* sửa cái ở đây */
+    background:rgba(158, 245, 19, 0.712);
+    transform-origin: center top;
+    transform: rotate(0.25turn);
+    transition: transform 0.2s ease-out;
+  }
+  
+  
+  
+  .gauge__cover_da {
+    width: 75%;
+    height: 150%;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+  
+    /* Text */
+   display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 25%;
+    box-sizing: border-box;
+    font-size: 10px;
+  }
+ /* as */
+ .gauge_as {
+  margin-left: 5vw;
+    width: 10vw;
+    max-width: 250px;
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    color: #004033;
+  
+  }
+
+
+  .gauge__fill_as{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: inherit;
+    height: 150%; 
+    /* sửa cái ở đây */
+    background:rgba(206, 224, 37, 0.87);
+    transform-origin: center top;
+    transform: rotate(0.25turn);
+    transition: transform 0.2s ease-out;
+  }
+  
+  
+  
+  .gauge__cover_as {
+    width: 75%;
+    height: 150%;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+  
+    /* Text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 25%;
+    box-sizing: border-box;
+    font-size: 10px;
+  }
+  /* nhiet do nuoc  */
+  .gauge_ndn {
+    margin-left: 5vw;
+      width: 10vw;
+      max-width: 250px;
+      font-family: "Roboto", sans-serif;
+      font-size: 20px;
+      color: #004033;
+    
+    }
+  
+  
+    .gauge__fill_ndn{
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: inherit;
+      height: 150%; 
+      /* sửa cái ở đây */
+      background:rgba(32, 245, 209, 0.87);
+      transform-origin: center top;
+      transform: rotate(0.25turn);
+      transition: transform 0.2s ease-out;
+    }
+    
+    
+    
+    .gauge__cover_ndn {
+      width: 75%;
+      height: 150%;
+      background: #ffffff;
+      border-radius: 50%;
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+    
+      /* Text */
+     display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 25%;
+      box-sizing: border-box;
+      font-size: 10px;
+    }
+/* nhiet do */
+.gauge_nd {
+  margin-left: 5vw;
+    width: 10vw;
+    max-width: 250px;
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    color: #004033;
+  
+  }
+
+
+  .gauge__fill_nd{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: inherit;
+    height: 150%; 
+    /* sửa cái ở đây */
+    background:rgba(243, 62, 116, 0.87);
+    transform-origin: center top;
+    transform: rotate(0.25turn);
+    transition: transform 0.2s ease-out;
+  }
+  
+  
+  
+  .gauge__cover_nd {
+    width: 75%;
+    height: 150%;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+  
+    /* Text */
+   display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 25%;
+    box-sizing: border-box;
+    font-size: 10px;
+  }
+
+  
+
+
+
+  /* button */
+  .btn_auto {
+    background-color:transparent;
+    border-radius:17px;
+    border:1px solid #4391f0;
+    display:inline-block;
+    cursor:pointer;
+    color:#333333;
+    font-family:Arial;
+    font-size:17px;
+    
+    padding:13px 38px;
+    text-decoration:none;
+  
+    margin-top: 20px;
+    
+  }
+  .btn_auto:hover {
+    background-color:transparent;
+  }
+  .btn_auto:active {
+    position:relative;
+    top:1px;
+  }

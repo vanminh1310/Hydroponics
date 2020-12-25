@@ -42,7 +42,9 @@
 // box
 const gaugeElement = document.querySelector(".gauge");
 
-function setGaugeValue(gauge, value) {
+
+
+function setGaugeValue1(gauge, value) {
   if (value < 0 || value > 200) {
     return;
   }
@@ -54,8 +56,120 @@ function setGaugeValue(gauge, value) {
   
   gauge.querySelector(".gauge__cover").textContent = `${(value)}%`;
 }
+setGaugeValue1(gaugeElement, 10);
 
-setGaugeValue(gaugeElement, 10);
+
+
+// 
+
+const gaugeElement1 = document.querySelector(".gauge1");
+
+function setGaugeValue(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill1").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover1").textContent = `${(value)}°C`;
+
+
+}
+setGaugeValue(gaugeElement1, 15);
+// ph
+const gaugeElementph = document.querySelector(".gauge_ph");
+
+function setGaugeValueph(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill_ph").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover_ph").textContent = `${(value)}%`;
+
+
+}
+setGaugeValueph(gaugeElementph, 5.5);
+// da
+const gaugeElementda = document.querySelector(".gauge_da");
+
+function setGaugeValueda(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill_da").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover_da").textContent = `${(value)}%`;
+
+
+}
+setGaugeValueda(gaugeElementda, 15);
+// anh sang
+const gaugeElementas = document.querySelector(".gauge_as");
+
+function setGaugeValueas(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill_as").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover_as").textContent = `${(value)} lux`;
+
+
+}
+setGaugeValueas(gaugeElementas, 25);
+// nhiet do nuoc
+const gaugeElementndn = document.querySelector(".gauge_ndn");
+
+function setGaugeValuendn(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill_ndn").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover_ndn").textContent = `${(value)}°C`;
+
+
+}
+setGaugeValuendn(gaugeElementndn, 80);
+// nhiet do 
+const gaugeElementnd = document.querySelector(".gauge_nd");
+
+function setGaugeValuend(gauge, value) {
+  if (value < 0 || value > 200) {
+    return;
+  }
+
+  gauge.querySelector(".gauge__fill_nd").style.transform = `rotate(${
+    value/200
+  }turn)`;
+
+  gauge.querySelector(".gauge__cover_nd").textContent = `${(value)}°C`;
+
+
+}
+setGaugeValuend(gaugeElementnd, 30.5);
+
+
+
+
+
+
+
 
 
 function toast({ title = "", message = "", type = "info", duration = 3000 }) {
