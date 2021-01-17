@@ -1,6 +1,6 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-
+//#include"test.h"
 
 #define LVGL_TICK_PERIOD 60
 
@@ -84,21 +84,7 @@ bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 }
 
 
-static void event_handler(lv_obj_t * obj, lv_event_t event)
-{
-    if(event == LV_EVENT_CLICKED) {
-        lv_ex_tabview_1();
-    }
-    else if(event == LV_EVENT_VALUE_CHANGED) {
-        Serial.println("Toggled\n");
-    }
-}
-static void event_handler1(lv_obj_t * obj, lv_event_t event)
-{
-    if(event == LV_EVENT_CLICKED) {
-         lv_ex_btn_1();
-    }
-    }
+
 
 static void lv_ex_tabview_1(void)
 {
@@ -128,7 +114,7 @@ static void lv_ex_tabview_1(void)
 
     label = lv_label_create(btn13, NULL);
     lv_label_set_text(label, "Exit");
-    lv_obj_set_event_cb(btn13, event_handler1);
+    //lv_obj_set_event_cb(btn13, event_handler1);
 
     label = lv_label_create(tab3, NULL);
     lv_label_set_text(label, "Third tab");
@@ -136,6 +122,16 @@ static void lv_ex_tabview_1(void)
 
   
 }
+static void event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED) {
+        lv_ex_tabview_1();
+    }
+    else if(event == LV_EVENT_VALUE_CHANGED) {
+        Serial.println("Toggled\n");
+    }
+}
+
 
 
 void lv_ex_btn_1(void)
@@ -159,6 +155,22 @@ void lv_ex_btn_1(void)
     label = lv_label_create(btn2, NULL);
     lv_label_set_text(label, "Toggled");
 }
+//hinh anh 
+
+// LV_IMG_DECLARE(joy-a2_map);
+
+// void lv_ex_img_1(void)
+// {
+//     lv_obj_t * img1 = lv_img_create(lv_scr_act(), NULL);
+//     lv_img_set_src(img1, &);
+//     lv_obj_align(img1, NULL, LV_ALIGN_CENTER, 0, -20);
+
+//     lv_obj_t * img2 = lv_img_create(lv_scr_act(), NULL);
+//     lv_img_set_src(img2, LV_SYMBOL_OK "Accept");
+//     lv_obj_align(img2, img1, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
+// }
+
+
 
 
 void setup() {
