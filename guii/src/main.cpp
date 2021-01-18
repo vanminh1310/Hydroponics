@@ -1,8 +1,9 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-//#include"test.h"
+#include"test.h"
 
 #define LVGL_TICK_PERIOD 60
+
 
 //Ticker tick; /* timer for interrupt handler */
 TFT_eSPI tft = TFT_eSPI(); /* TFT instance */
@@ -15,6 +16,8 @@ int screenHeight = 240;
   
 #if USE_LV_LOG != 0
 /* Serial debugging */
+
+
 void my_print(lv_log_level_t level, const char * file, uint32_t line, const char * dsc)
 {
 
@@ -86,6 +89,7 @@ bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 
 
 
+
 static void lv_ex_tabview_1(void)
 {
     /*Create a Tab view object*/
@@ -93,35 +97,73 @@ static void lv_ex_tabview_1(void)
     tabview = lv_tabview_create(lv_scr_act(), NULL);
 
     /*Add 3 tabs (the tabs are page (lv_page) and can be scrolled*/
-    lv_obj_t *tab1 = lv_tabview_add_tab(tabview, "Tab 1");
-    lv_obj_t *tab2 = lv_tabview_add_tab(tabview, "Tab 2");
-    lv_obj_t *tab3 = lv_tabview_add_tab(tabview, "Tab 3");
+    lv_obj_t *tab1 = lv_tabview_add_tab(tabview, "Dashboard");
+    lv_obj_t *tab2 = lv_tabview_add_tab(tabview, "Menu");
+    lv_obj_align(tab1,NULL,LV_ALIGN_IN_LEFT_MID,-10,40);
+  
 
-
+ 
     /*Add content to the tabs*/
     lv_obj_t * label = lv_label_create(tab1, NULL);
-    lv_label_set_text(label, "This the first tab\n\n"
-                             "If the content\n"
+    lv_obj_t * lmeter;
+    lv_obj_t * lmeter1;
+    lv_label_set_text(label, "Dashboard\n\n");
+    
+
+    
+      
+  
+    
+    
+    
+    lmeter = lv_linemeter_create(tab1, NULL);
+    lv_linemeter_set_range(lmeter, 0, 100);   
+                /*Set the range*/
+    lv_linemeter_set_value(lmeter, 50);                       /*Set the current value*/
+    lv_linemeter_set_scale(lmeter, 240, 21);                  /*Set the angle and number of lines*/
+    lv_obj_set_size(lmeter, 150, 150);
+    lv_obj_align(lmeter, NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
+
+
+    lmeter1 = lv_linemeter_create(tab1, NULL);
+    lv_linemeter_set_range(lmeter1, 0, 100);                   /*Set the range*/
+    lv_linemeter_set_value(lmeter1, 10);                       /*Set the current value*/
+    lv_linemeter_set_scale(lmeter1, 240, 21);                  /*Set the angle and number of lines*/
+    lv_obj_set_size(lmeter1, 150, 150);
+    lv_obj_align(lmeter1, NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
+
+    
+ 
+                             
                         
-                             );
+                             
 
     label = lv_label_create(tab2, NULL);
     lv_label_set_text(label, "Second tab");
     // tao nut bam su kien o day trong moi tap 
     
     lv_obj_t * btn13 = lv_btn_create(tab2, NULL);
-    lv_obj_align(btn13, NULL, LV_ALIGN_CENTER, 0, -40);
+    lv_obj_align(btn13, NULL, LV_ALIGN_OUT_RIGHT_MID , 0, -40);
 
     label = lv_label_create(btn13, NULL);
     lv_label_set_text(label, "Exit");
-    //lv_obj_set_event_cb(btn13, event_handler1);
+     
 
-    label = lv_label_create(tab3, NULL);
-    lv_label_set_text(label, "Third tab");
+ 
     
 
   
 }
+
+
+// .........................................
+
+
+// .........................................
+
+
+
+
 static void event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) {
@@ -134,7 +176,9 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
 
 
 
-void lv_ex_btn_1(void)
+
+
+static void lv_ex_btn_1(void)
 {
     lv_obj_t * label;
 
@@ -218,12 +262,12 @@ void setup() {
 
   lv_obj_t * scr = lv_cont_create(NULL, NULL);
   lv_disp_load_scr(scr);
-
-    lv_ex_btn_1();
+lv_ex_tabview_1();
+    
 
 }
 void loop() {
-
+  
   lv_task_handler(); /* let the GUI do its work */
   delay(5);
 }
