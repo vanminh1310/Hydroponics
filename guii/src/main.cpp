@@ -1,6 +1,7 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-#include"test.h"
+//#include"test.h"
+
 
 #define LVGL_TICK_PERIOD 60
 
@@ -90,131 +91,96 @@ bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 
 
 
-static void lv_ex_tabview_1(void)
-{
-    /*Create a Tab view object*/
-    lv_obj_t *tabview;
-    tabview = lv_tabview_create(lv_scr_act(), NULL);
 
-    /*Add 3 tabs (the tabs are page (lv_page) and can be scrolled*/
-    lv_obj_t *tab1 = lv_tabview_add_tab(tabview, "Dashboard");
-    lv_obj_t *tab2 = lv_tabview_add_tab(tabview, "Menu");
-    lv_obj_align(tab1,NULL,LV_ALIGN_IN_LEFT_MID,-10,40);
-  
-
- 
-    /*Add content to the tabs*/
-    lv_obj_t * label = lv_label_create(tab1, NULL);
-    lv_obj_t * lmeter;
-    lv_obj_t * lmeter1;
-    lv_label_set_text(label, "Dashboard\n\n");
-    
-
-    
-      
-  
-    
-    
-    
-    lmeter = lv_linemeter_create(tab1, NULL);
-    lv_linemeter_set_range(lmeter, 0, 100);   
-                /*Set the range*/
-    lv_linemeter_set_value(lmeter, 50);                       /*Set the current value*/
-    lv_linemeter_set_scale(lmeter, 240, 21);                  /*Set the angle and number of lines*/
-    lv_obj_set_size(lmeter, 150, 150);
-    lv_obj_align(lmeter, NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
-
-
-    lmeter1 = lv_linemeter_create(tab1, NULL);
-    lv_linemeter_set_range(lmeter1, 0, 100);                   /*Set the range*/
-    lv_linemeter_set_value(lmeter1, 10);                       /*Set the current value*/
-    lv_linemeter_set_scale(lmeter1, 240, 21);                  /*Set the angle and number of lines*/
-    lv_obj_set_size(lmeter1, 150, 150);
-    lv_obj_align(lmeter1, NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
-
-    
- 
-                             
-                        
-                             
-
-    label = lv_label_create(tab2, NULL);
-    lv_label_set_text(label, "Second tab");
-    // tao nut bam su kien o day trong moi tap 
-    
-    lv_obj_t * btn13 = lv_btn_create(tab2, NULL);
-    lv_obj_align(btn13, NULL, LV_ALIGN_OUT_RIGHT_MID , 0, -40);
-
-    label = lv_label_create(btn13, NULL);
-    lv_label_set_text(label, "Exit");
-     
-
- 
-    
-
-  
-}
-
-
-// .........................................
-
-
-// .........................................
-
-
-
-
-static void event_handler(lv_obj_t * obj, lv_event_t event)
-{
-    if(event == LV_EVENT_CLICKED) {
-        lv_ex_tabview_1();
-    }
-    else if(event == LV_EVENT_VALUE_CHANGED) {
-        Serial.println("Toggled\n");
-    }
-}
-
-
-
-
-
-static void lv_ex_btn_1(void)
-{
-    lv_obj_t * label;
-
-    lv_obj_t * btn1 = lv_btn_create(lv_scr_act(), NULL);
-    lv_obj_set_event_cb(btn1, event_handler);
-    lv_obj_align(btn1, NULL, LV_ALIGN_CENTER, 0, -40);
-
-    label = lv_label_create(btn1, NULL);
-    lv_label_set_text(label, "Test");
-
-    lv_obj_t * btn2 = lv_btn_create(lv_scr_act(), NULL);
-    lv_obj_set_event_cb(btn2, event_handler);
-    lv_obj_align(btn2, NULL, LV_ALIGN_CENTER, 0, 40);
-    lv_btn_set_checkable(btn2, true);
-    lv_btn_toggle(btn2);
-    lv_btn_set_fit2(btn2, LV_FIT_NONE, LV_FIT_TIGHT);
-
-    label = lv_label_create(btn2, NULL);
-    lv_label_set_text(label, "Toggled");
-}
-//hinh anh 
-
-// LV_IMG_DECLARE(joy-a2_map);
-
-// void lv_ex_img_1(void)
+// static void event_handler(lv_obj_t * obj, lv_event_t event)
 // {
-//     lv_obj_t * img1 = lv_img_create(lv_scr_act(), NULL);
-//     lv_img_set_src(img1, &);
-//     lv_obj_align(img1, NULL, LV_ALIGN_CENTER, 0, -20);
-
-//     lv_obj_t * img2 = lv_img_create(lv_scr_act(), NULL);
-//     lv_img_set_src(img2, LV_SYMBOL_OK "Accept");
-//     lv_obj_align(img2, img1, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
+//     if(event == LV_EVENT_CLICKED) {
+//         lv_ex_tabview_1();
+//     }
+//     else if(event == LV_EVENT_VALUE_CHANGED) {
+//         Serial.println("Toggled\n");
+//     }
 // }
 
 
+
+
+
+// static void lv_ex_btn_1(void)
+// {
+//     lv_obj_t * label;
+
+//     lv_obj_t * btn1 = lv_btn_create(lv_scr_act(), NULL);
+//     lv_obj_set_event_cb(btn1, event_handler);
+//     lv_obj_align(btn1, NULL, LV_ALIGN_CENTER, 0, -40);
+
+//     label = lv_label_create(btn1, NULL);
+//     lv_label_set_text(label, "Test");
+
+//     lv_obj_t * btn2 = lv_btn_create(lv_scr_act(), NULL);
+//     lv_obj_set_event_cb(btn2, event_handler);
+//     lv_obj_align(btn2, NULL, LV_ALIGN_CENTER, 0, 40);
+//     lv_btn_set_checkable(btn2, true);
+//     lv_btn_toggle(btn2);
+//     lv_btn_set_fit2(btn2, LV_FIT_NONE, LV_FIT_TIGHT);
+
+//     label = lv_label_create(btn2, NULL);
+//     lv_label_set_text(label, "Toggled");
+// }
+//hinh anh 
+
+//  thiet ke lai tu dau 
+static lv_obj_t * bg_top;
+static lv_obj_t * bg_middle;
+static lv_obj_t * bg_bottom;
+static lv_obj_t * label_status;
+
+static void lv_main(){
+lv_obj_t * src = lv_obj_create(NULL,NULL);
+lv_obj_t *tabview;
+lv_scr_load(src);
+    
+    // tao tap view
+    tabview = lv_tabview_create(src, NULL);
+    lv_obj_t *tab1 = lv_tabview_add_tab(tabview, LV_SYMBOL_HOME);
+    lv_obj_t *tab2 = lv_tabview_add_tab(tabview, LV_SYMBOL_LIST);
+    //dich trai dich phai 
+    lv_obj_set_style_local_pad_right(tabview, LV_TABVIEW_PART_TAB_BG, LV_STATE_DEFAULT, LV_HOR_RES/2.5 );
+    lv_obj_set_style_local_bg_color(tabview, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_WHITE);
+  
+
+// tao ki tu wifi
+     lv_obj_t * label = lv_label_create(lv_scr_act(), NULL);
+  
+    lv_label_set_text(label,LV_SYMBOL_WIFI);
+    lv_obj_set_style_local_text_color( label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED );//set mau cho chu ki tu 
+    lv_obj_set_x(label,280);
+    lv_obj_set_y(label,20);
+// tao bg_bottomm
+   bg_bottom = lv_obj_create(lv_scr_act(), NULL);
+    lv_obj_clean_style_list(bg_bottom, LV_OBJ_PART_MAIN);
+    lv_obj_set_style_local_bg_opa(bg_bottom, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_OPA_COVER);
+    lv_obj_set_style_local_bg_color(bg_bottom, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_WHITE);
+    lv_obj_set_pos(bg_bottom, 0, 220);
+    lv_obj_set_size(bg_bottom, LV_HOR_RES, 20);
+    lv_obj_t* label2 = lv_label_create(bg_bottom,NULL);
+    lv_label_set_text(label2,"00:00");
+    lv_obj_align(label2,NULL,LV_ALIGN_IN_BOTTOM_MID,0,0);
+
+      lv_obj_t* label3 = lv_label_create(bg_bottom,NULL);
+    lv_label_set_text(label3,LV_SYMBOL_GPS);
+    lv_obj_align(label3,NULL,LV_ALIGN_IN_BOTTOM_LEFT,0,0);
+
+      lv_obj_t* label4 = lv_label_create(bg_bottom,NULL);
+    lv_label_set_text(label4,LV_SYMBOL_BATTERY_2);
+    lv_obj_align(label4,NULL,LV_ALIGN_IN_BOTTOM_RIGHT,0,0);
+    
+    
+
+
+}
+
+// 
 
 
 void setup() {
@@ -262,7 +228,7 @@ void setup() {
 
   lv_obj_t * scr = lv_cont_create(NULL, NULL);
   lv_disp_load_scr(scr);
-lv_ex_tabview_1();
+lv_main();
     
 
 }
