@@ -175,14 +175,9 @@ void loop() {
 
 static void lv_main(){
 // time
-
   timeClient.update();
   String time = timeClient.getFormattedTime();
    Serial.println(time);
-
-
-
- 
 
 // 
 
