@@ -1,9 +1,10 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-//#include"test.h"
+#include"v.c"
 #include <NTPClient.h>
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
+
 
 const char *ssid     = "joy";
 const char *password = "12345678";
@@ -12,6 +13,9 @@ NTPClient timeClient(ntpUDP,"pool.ntp.org",7*3600); // dich mu gio sang mui gio 
 
 #define LVGL_TICK_PERIOD 60
 
+
+
+LV_IMG_DECLARE (v);
 
 //Ticker tick; /* timer for interrupt handler */
 TFT_eSPI tft = TFT_eSPI(); /* TFT instance */
@@ -96,17 +100,51 @@ bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 
 
 //  thiet ke lai tu dau 
-static lv_obj_t * bg_top;
-static lv_obj_t * bg_middle;
+
+
 static lv_obj_t * bg_bottom;
-static lv_obj_t * label_status;
+
 
 static void lv_main();
-
+const char*test;
+static void timetest();
+void guiTask(void *pvParameters);
 // 
 
+void wifi() {
+  int i =0;
+  WiFi.begin(ssid, password);
+
+  while ( WiFi.status() != WL_CONNECTED ) {
+    i++;
+    //    delay(1000);
+    //    Serial.println(i);
+    delay(50);
+    Serial.print( "." );
+    if (i == 10) {
+      i = 0;
+      
+      break;
+
+    }
+  }
+
+
+
+}
 
 void setup() {
+  Serial.begin(9600);
+  
+  xTaskCreate(guiTask,
+                  "gui",
+                  4096*2,
+                  NULL,
+                  2,
+                  NULL);
+}
+
+void guiTask(void *pvParameters){
 
   ledcSetup(10, 5000/*freq*/, 20 /*resolution - do phan giai*/);
   ledcAttachPin(32, 10);
@@ -116,12 +154,7 @@ void setup() {
   Serial.begin(9600); /* prepare for possible serial debug */
 
 // wifi
- WiFi.begin(ssid, password);
-
-  while ( WiFi.status() != WL_CONNECTED ) {
-    delay ( 500 );
-    Serial.print ( "." );
-  }
+    wifi();
     timeClient.begin();
 // 
 
@@ -163,21 +196,30 @@ void setup() {
   lv_disp_load_scr(scr);
 
     lv_main();
+     timetest();
+  
+  
+
+    while (1) {
+       
+         lv_task_handler();
+
+         
+           
+    }
+
 
 
 }
+
+
 void loop() {
-  
-  lv_task_handler(); /* let the GUI do its work */
-  delay(5);
   
 }
 
 static void lv_main(){
 // time
-  timeClient.update();
-  String time = timeClient.getFormattedTime();
-   Serial.println(time);
+
 
 // 
 
@@ -192,15 +234,56 @@ lv_scr_load(src);
     //dich trai dich phai 
     lv_obj_set_style_local_pad_right(tabview, LV_TABVIEW_PART_TAB_BG, LV_STATE_DEFAULT, LV_HOR_RES/2.5 );
     lv_obj_set_style_local_bg_color(tabview, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_WHITE);
+
+
+    // tap menu
+    // wifi
+    lv_obj_t * imgwifi = lv_img_create(tab2,NULL);
+   
+    lv_img_set_src(imgwifi, &v);
+      lv_obj_set_x(imgwifi,20);
+        lv_obj_set_y(imgwifi,5);
+
+    lv_obj_t * img2 = lv_label_create(tab2, NULL);
+     lv_label_set_text(img2,"Wifi");
+    lv_obj_set_x(img2,28);
+        lv_obj_set_y(img2,55);
+
+
+
+    lv_obj_t * imgwifi1 = lv_img_create(tab2,NULL);
+   
+    lv_img_set_src(imgwifi1, &v);
+    lv_obj_set_x(imgwifi1,20);
+    lv_obj_set_y(imgwifi1,80);
+
+    lv_obj_t * img21 = lv_label_create(tab2, NULL);
+    lv_label_set_text(img21,"Wifi");
+    lv_obj_set_x(img21,28);
+    lv_obj_set_y(img21,130);
+    // 
+   
+
+
+    // 
+
   
 
 // tao ki tu wifi
-     lv_obj_t * label = lv_label_create(lv_scr_act(), NULL);
-  
-    lv_label_set_text(label,LV_SYMBOL_WIFI);
+      lv_obj_t * label = lv_label_create(lv_scr_act(), NULL);
+      lv_label_set_text(label,LV_SYMBOL_WIFI);
+      lv_obj_set_x(label,280);
+      lv_obj_set_y(label,20);
+     if (WiFi.status() != WL_CONNECTED)
+     {
     lv_obj_set_style_local_text_color( label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED );//set mau cho chu ki tu 
-    lv_obj_set_x(label,280);
-    lv_obj_set_y(label,20);
+     }
+     else{
+         lv_obj_set_style_local_text_color( label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN );//set mau cho chu ki tu 
+     }
+      
+  
+    
 // tao bg_bottomm
    bg_bottom = lv_obj_create(lv_scr_act(), NULL);
     lv_obj_clean_style_list(bg_bottom, LV_OBJ_PART_MAIN);
@@ -208,11 +291,10 @@ lv_scr_load(src);
     lv_obj_set_style_local_bg_color(bg_bottom, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_WHITE);
     lv_obj_set_pos(bg_bottom, 0, 220);
     lv_obj_set_size(bg_bottom, LV_HOR_RES, 20);
-   
-
-      lv_obj_t* label3 = lv_label_create(bg_bottom,NULL);
-    lv_label_set_text(label3,LV_SYMBOL_GPS);
-    lv_obj_align(label3,NULL,LV_ALIGN_IN_BOTTOM_LEFT,0,0);
+    
+      lv_obj_t* label2 = lv_label_create(bg_bottom,NULL);
+    lv_label_set_text(label2,LV_SYMBOL_GPS);
+    lv_obj_align(label2,NULL,LV_ALIGN_IN_BOTTOM_LEFT,0,0);
 
       lv_obj_t* label4 = lv_label_create(bg_bottom,NULL);
     lv_label_set_text(label4,LV_SYMBOL_BATTERY_2);
@@ -220,5 +302,23 @@ lv_scr_load(src);
     
     
 
+
+}
+static void timetest(){
+    timeClient.update();
+   String time = timeClient.getFormattedTime();
+  test = time.c_str();
+   Serial.println(test);
+  
+
+ 
+   lv_obj_t* label3 = lv_label_create(bg_bottom,NULL);
+   lv_label_set_text(label3," ");
+ 
+      delay(1000);
+    lv_label_set_text(label3,test);
+    
+    lv_obj_align(label3,NULL,LV_ALIGN_IN_BOTTOM_MID,0,0);
+    lv_label_set_long_mode(label3, LV_LABEL_LONG_SROLL_CIRC);
 
 }
