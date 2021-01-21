@@ -104,11 +104,13 @@ bool my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data)
 
 static lv_obj_t * bg_bottom;
 
-
+ static lv_obj_t* label_time;
+ static void time12(String text);
 static void lv_main();
 const char*test;
 static void timetest();
 void guiTask(void *pvParameters);
+
 // 
 
 void wifi() {
@@ -196,11 +198,12 @@ void guiTask(void *pvParameters){
   lv_disp_load_scr(scr);
 
     lv_main();
-     timetest();
+   
   
   
 
     while (1) {
+        timetest();
        
          lv_task_handler();
 
@@ -234,6 +237,10 @@ lv_scr_load(src);
     //dich trai dich phai 
     lv_obj_set_style_local_pad_right(tabview, LV_TABVIEW_PART_TAB_BG, LV_STATE_DEFAULT, LV_HOR_RES/2.5 );
     lv_obj_set_style_local_bg_color(tabview, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_WHITE);
+
+    // tets
+    
+
 
 
     // tap menu
@@ -299,26 +306,27 @@ lv_scr_load(src);
       lv_obj_t* label4 = lv_label_create(bg_bottom,NULL);
     lv_label_set_text(label4,LV_SYMBOL_BATTERY_2);
     lv_obj_align(label4,NULL,LV_ALIGN_IN_BOTTOM_RIGHT,0,0);
-    
-    
+
+      label_time = lv_label_create(bg_bottom,NULL);
+
+      lv_obj_align(label_time,NULL,LV_ALIGN_IN_BOTTOM_MID,0,0);
+      lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_BLACK);
 
 
 }
 static void timetest(){
     timeClient.update();
    String time = timeClient.getFormattedTime();
-  test = time.c_str();
-   Serial.println(test);
-  
+  time12(time);
 
  
-   lv_obj_t* label3 = lv_label_create(bg_bottom,NULL);
-   lv_label_set_text(label3," ");
- 
-      delay(1000);
-    lv_label_set_text(label3,test);
+  
     
-    lv_obj_align(label3,NULL,LV_ALIGN_IN_BOTTOM_MID,0,0);
-    lv_label_set_long_mode(label3, LV_LABEL_LONG_SROLL_CIRC);
 
 }
+// chuyen text bằng cách khai báo biến toàn cục rồi gọi lại ra không nên tạo nhãn nhiều lần mà chỉ tạo 1 lần duy nhất k thì nó bị đè.
+static void time12(String text){
+  lv_label_set_text(label_time, text.c_str());
+}
+
+
