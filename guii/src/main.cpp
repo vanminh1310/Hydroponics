@@ -384,7 +384,7 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) {
         printf("Test\n");
-        //iconwifi();
+        iconwifi();
     }
     else if(event == LV_EVENT_VALUE_CHANGED) {
         printf("tests22222\n");
@@ -406,6 +406,7 @@ static void event_handler1(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) {
         printf("Test\n");
+        lv_main();
         
     }
     else if(event == LV_EVENT_VALUE_CHANGED) {
