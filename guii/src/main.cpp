@@ -1,6 +1,11 @@
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-#include "v.c"
+#include "v.c"//icon wifi
+#include "dash.c"
+#include "chart.c"
+#include "host.c"
+#include "about.c"
+#include "st.c"
 #include <NTPClient.h>
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
@@ -100,10 +105,21 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 static lv_obj_t *bg_bottom;
 
 static lv_obj_t *label_time;
+static lv_obj_t *label_icon_wifi;
+static  lv_obj_t *imgwifi;
+static  lv_obj_t *imgwifi1;
+static lv_obj_t *tab1;
+static lv_obj_t *tab2;
+static void event_handler(lv_obj_t * obj, lv_event_t event);
+static void iconwifi();
+
+
 static void time12(String text);
 static void lv_main();
 const char *test;
 static void timetest();
+static void checkwifi();
+void wifi();
 void guiTask(void *pvParameters);
 
 //
@@ -198,8 +214,11 @@ void guiTask(void *pvParameters)
   while (1)
   {
     timetest();
-
+    checkwifi();
     lv_task_handler();
+
+
+
   }
 }
 
@@ -229,43 +248,86 @@ static void lv_main()
 
   // tap menu
   // wifi
-  lv_obj_t *imgwifi = lv_img_create(tab2, NULL);
 
+  lv_obj_t *imgwifi = lv_img_create(tab2, NULL);
   lv_img_set_src(imgwifi, &v);
+  lv_obj_set_click(imgwifi, true);
+  lv_obj_set_event_cb(imgwifi, event_handler);
   lv_obj_set_x(imgwifi, 20);
   lv_obj_set_y(imgwifi, 5);
-
   lv_obj_t *img2 = lv_label_create(tab2, NULL);
   lv_label_set_text(img2, "Wifi");
   lv_obj_set_x(img2, 28);
   lv_obj_set_y(img2, 55);
 
-  lv_obj_t *imgwifi1 = lv_img_create(tab2, NULL);
 
-  lv_img_set_src(imgwifi1, &v);
-  lv_obj_set_x(imgwifi1, 20);
-  lv_obj_set_y(imgwifi1, 80);
-
+// st
+  lv_obj_t *imgst = lv_img_create(tab2, NULL);
+  lv_img_set_src(imgst, &st);
+  lv_obj_align(imgst,NULL,LV_ALIGN_IN_TOP_MID,0,5);
+  // lv_obj_set_x(imgst, 20);
+  // lv_obj_set_y(imgst, 80);
   lv_obj_t *img21 = lv_label_create(tab2, NULL);
-  lv_label_set_text(img21, "Wifi");
-  lv_obj_set_x(img21, 28);
-  lv_obj_set_y(img21, 130);
-  //
+  lv_label_set_text(img21, "Setting");
+   lv_obj_align(img21,NULL,LV_ALIGN_IN_TOP_MID,0,55);
+  // lv_obj_set_x(img21, 25);
+  // lv_obj_set_y(img21, 130);
 
   //
+// dashboard
+
+ lv_obj_t *imgds = lv_img_create(tab2, NULL);
+  lv_img_set_src(imgds, &dash);
+  lv_obj_align(imgds,NULL,LV_ALIGN_IN_TOP_RIGHT,-20,5);
+
+  lv_obj_t *img22 = lv_label_create(tab2, NULL);
+  lv_label_set_text(img22, "Dash");
+   lv_obj_align(img22,NULL,LV_ALIGN_IN_TOP_RIGHT,-20,55);
+
+// chart 
+ lv_obj_t *imgchart = lv_img_create(tab2, NULL);
+  lv_img_set_src(imgchart, &chart);
+  lv_obj_align(imgchart,NULL,LV_ALIGN_IN_LEFT_MID,20,15);
+
+  lv_obj_t *img23 = lv_label_create(tab2, NULL);
+  lv_label_set_text(img23, "Chart");
+   lv_obj_align(img23,NULL,LV_ALIGN_IN_LEFT_MID,20,50);
+  // lv_obj_set_x(img21, 25);
+  // lv_obj_set_y(img21, 130);
+// hostpost
+ lv_obj_t *imghost = lv_img_create(tab2, NULL);
+  lv_img_set_src(imghost, &host);
+  lv_obj_align(imghost,NULL,LV_ALIGN_CENTER,0,15);
+
+  lv_obj_t *img24 = lv_label_create(tab2, NULL);
+  lv_label_set_text(img24, "Esp Now");
+   lv_obj_align(img24,NULL,LV_ALIGN_CENTER,0,50);
+
+// 
+ lv_obj_t *imgabout = lv_img_create(tab2, NULL);
+  lv_img_set_src(imgabout, &about);
+  lv_obj_align(imgabout,NULL,LV_ALIGN_IN_RIGHT_MID,-20,15);
+
+  lv_obj_t *img25 = lv_label_create(tab2, NULL);
+  lv_label_set_text(img25, "About");
+   lv_obj_align(img25,NULL,LV_ALIGN_IN_RIGHT_MID,-20,50);
+
+
+  //
+
 
   // tao ki tu wifi
-  lv_obj_t *label = lv_label_create(lv_scr_act(), NULL);
-  lv_label_set_text(label, LV_SYMBOL_WIFI);
-  lv_obj_set_x(label, 280);
-  lv_obj_set_y(label, 20);
+  label_icon_wifi = lv_label_create(lv_scr_act(), NULL);
+  lv_label_set_text(label_icon_wifi, LV_SYMBOL_WIFI);
+  lv_obj_set_x(label_icon_wifi, 280);
+  lv_obj_set_y(label_icon_wifi, 20);
   if (WiFi.status() != WL_CONNECTED)
   {
-    lv_obj_set_style_local_text_color(label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
+    lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
   }
   else
   {
-    lv_obj_set_style_local_text_color(label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+    lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
   }
 
   // tao bg_bottomm
@@ -289,6 +351,8 @@ static void lv_main()
   lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 }
+
+
 static void timetest()
 {
   timeClient.update();
@@ -299,4 +363,28 @@ static void timetest()
 static void time12(String text)
 {
   lv_label_set_text(label_time, text.c_str());
+}
+
+static void checkwifi(){
+   if (WiFi.status() != WL_CONNECTED)
+  {
+    lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
+    wifi();
+  }
+  else
+  {
+    lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+  }
+ 
+
+}
+
+static void event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED) {
+        printf("Test\n");
+    }
+    else if(event == LV_EVENT_VALUE_CHANGED) {
+        printf("tests22222\n");
+    }
 }
