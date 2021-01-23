@@ -111,6 +111,7 @@ static  lv_obj_t *imgwifi1;
 static lv_obj_t *tab1;
 static lv_obj_t *tab2;
 static void event_handler(lv_obj_t * obj, lv_event_t event);
+static void event_handler1(lv_obj_t * obj, lv_event_t event);
 static void iconwifi();
 
 
@@ -348,7 +349,7 @@ static void lv_main()
 
   label_time = lv_label_create(bg_bottom, NULL);
 
-  lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+  lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 }
 
@@ -383,6 +384,29 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) {
         printf("Test\n");
+        //iconwifi();
+    }
+    else if(event == LV_EVENT_VALUE_CHANGED) {
+        printf("tests22222\n");
+    }
+}
+static void iconwifi(){
+   lv_obj_t *test = lv_obj_create(lv_scr_act(), NULL);
+   lv_obj_set_height(test,240);
+      lv_obj_set_width(test,320);
+         lv_obj_t *labeltest = lv_label_create(test, NULL);
+         lv_label_set_text(labeltest,"Quay lai");
+         lv_obj_align(labeltest,NULL,LV_ALIGN_CENTER,0,0);
+           lv_obj_set_event_cb(test, event_handler1);
+  
+
+}
+
+static void event_handler1(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED) {
+        printf("Test\n");
+        
     }
     else if(event == LV_EVENT_VALUE_CHANGED) {
         printf("tests22222\n");
