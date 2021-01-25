@@ -6,12 +6,20 @@
 #include "host.c"
 #include "about.c"
 #include "st.c"
+#include "hd.c"
+#include "back50.c"
+#include "right50.c"
 #include <NTPClient.h>
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
 
 const char *ssid = "MF150_1B8B";
 const char *password = "26316529";
+
+unsigned long timeout = 10000; // 10sec
+
+
+
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 7 * 3600); // dich mu gio sang mui gio Viet Nam
 
@@ -101,15 +109,18 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 }
 
 //  thiet ke lai tu dau
-
+void connectWIFI();
+static lv_obj_t * ta_password;
 static lv_obj_t *bg_bottom;
-
+static lv_obj_t * bg_bottom2;
+static lv_obj_t * ddlist;// list wifi
+static lv_obj_t * kb;
+static void keyboard_event_cb(lv_obj_t * kb, lv_event_t event);
+static void updateBottomStatus(lv_color_t color, String text);
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
-static lv_obj_t *imgwifi;
-static lv_obj_t *imgwifi1;
-static lv_obj_t *tab1;
-static lv_obj_t *tab2;
+static lv_obj_t * label_status;
+
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
 static void iconwifi();
@@ -122,6 +133,10 @@ static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
 
+void beginWIFITask(void *pvParameters);
+
+static void dd_event_handler(lv_obj_t * obj, lv_event_t event);
+static void makeKeyboard();
 //
 
 void wifi()
@@ -155,7 +170,9 @@ void setup()
               NULL,
               2,
               NULL);
+
 }
+
 
 void guiTask(void *pvParameters)
 {
@@ -208,7 +225,7 @@ void guiTask(void *pvParameters)
 
   lv_obj_t *scr = lv_cont_create(NULL, NULL);
   lv_disp_load_scr(scr);
-
+ 
   lv_main();
 
   while (1)
@@ -226,17 +243,19 @@ void loop()
 static void lv_main()
 {
   // time
-
+ //imghd();// img hoa huong duong 
   //
 
-  lv_obj_t *src = lv_obj_create(NULL, NULL);
+  lv_obj_t *src1 = lv_obj_create(NULL, NULL);
+ 
   lv_obj_t *tabview;
-  lv_scr_load(src);
+  lv_scr_load(src1);
 
   // tao tap view
-  tabview = lv_tabview_create(src, NULL);
-  lv_obj_t *tab1 = lv_tabview_add_tab(tabview, LV_SYMBOL_HOME);
+  tabview = lv_tabview_create(src1, NULL);
+ // lv_obj_t *tab1 = lv_tabview_add_tab(tabview, LV_SYMBOL_HOME);
   lv_obj_t *tab2 = lv_tabview_add_tab(tabview, LV_SYMBOL_LIST);
+  lv_obj_t *tab1 = lv_tabview_add_tab(tabview, LV_SYMBOL_HOME);
   //dich trai dich phai
   lv_obj_set_style_local_pad_right(tabview, LV_TABVIEW_PART_TAB_BG, LV_STATE_DEFAULT, LV_HOR_RES / 2.5);
   lv_obj_set_style_local_bg_color(tabview, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
@@ -322,6 +341,8 @@ static void lv_main()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+
+    
   }
 
   // tao bg_bottomm
@@ -368,6 +389,7 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+    
   }
 }
 
@@ -377,6 +399,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
   {
     printf("Test\n");
     iconwifi();
+    
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
@@ -385,16 +408,54 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 }
 static void iconwifi()
 {
-  lv_obj_t *test = lv_obj_create(lv_scr_act(), NULL);
-  lv_obj_set_height(test, 240);
-  lv_obj_set_width(test, 320);
-  lv_obj_clean_style_list(test, LV_OBJ_PART_MAIN);
-  lv_obj_set_style_local_bg_opa(test, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_COVER);
-  lv_obj_set_style_local_bg_color(test, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-  lv_obj_t *labeltest = lv_label_create(test, NULL);
-  lv_label_set_text(labeltest, "Quay lai");
-  lv_obj_align(labeltest, NULL, LV_ALIGN_CENTER, 0, 0);
-  lv_obj_set_event_cb(test, event_handler1);
+   lv_obj_t *src2 = lv_obj_create(NULL, NULL);// tao va load man hinh moi
+   lv_scr_load(src2); 
+   lv_obj_set_style_local_bg_color(src2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+//  img back
+  lv_obj_t *imgback = lv_img_create(src2, NULL);
+  lv_img_set_src(imgback, &back50);
+  lv_obj_set_click(imgback, true);
+  lv_obj_set_event_cb(imgback, event_handler1);
+ lv_obj_align(imgback,NULL,LV_ALIGN_IN_TOP_LEFT,0,0);
+//  img right 
+  lv_obj_t *imgright = lv_img_create(src2, NULL);
+  lv_img_set_src(imgright, &right50);
+  lv_obj_set_click(imgright, true);
+  lv_obj_set_event_cb(imgright, event_handler1);// hanh dong 
+ lv_obj_align(imgright,NULL,LV_ALIGN_IN_TOP_RIGHT,0,0);
+
+//  static lv_obj_t * bg_bottom;
+
+
+   bg_bottom2 = lv_obj_create(src2, NULL);
+    lv_obj_clean_style_list(bg_bottom2, LV_OBJ_PART_MAIN);
+    lv_obj_set_style_local_bg_opa(bg_bottom2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_OPA_COVER);
+    lv_obj_set_style_local_bg_color(bg_bottom2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_ORANGE);
+    lv_obj_set_pos(bg_bottom2, 0, 220);
+    lv_obj_set_size(bg_bottom2, LV_HOR_RES, 30);
+
+    label_status = lv_label_create(bg_bottom2, NULL);
+    lv_label_set_long_mode(label_status, LV_LABEL_LONG_SROLL_CIRC);
+    lv_obj_set_width(label_status, LV_HOR_RES - 20);
+    lv_label_set_text(label_status, "");
+    lv_obj_align(label_status, NULL, LV_ALIGN_CENTER, 0, 0);
+
+    //updateBottomStatus(LV_COLOR_GREEN, "Da ket noi Wifi");
+
+
+    // list
+      ddlist = lv_dropdown_create(src2, NULL);
+    lv_dropdown_set_show_selected(ddlist, false);
+    lv_dropdown_set_text(ddlist, "WIFI");
+    lv_dropdown_set_options(ddlist, "...Searching...");
+    lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID,0, 10);
+    lv_obj_set_event_cb(ddlist, dd_event_handler);
+    
+    
+  
+    //makeKeyboard();
+    //makePWMsgBox();
+
 }
 
 static void event_handler1(lv_obj_t *obj, lv_event_t event)
@@ -409,3 +470,52 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
     printf("tests22222\n");
   }
 }
+
+
+
+
+static void updateBottomStatus(lv_color_t color, String text){
+  lv_obj_set_style_local_bg_color(bg_bottom2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,color);
+  lv_label_set_text(label_status, text.c_str());
+}
+// su kien danh sach
+
+
+static void dd_event_handler(lv_obj_t * obj, lv_event_t event){
+  
+  if(event == LV_EVENT_VALUE_CHANGED) {
+      lv_obj_set_hidden(bg_bottom2,100);
+      makeKeyboard();
+        
+        //popupPWMsgBox();
+    }
+}
+
+
+// 
+static void makeKeyboard(){
+  kb = lv_keyboard_create(lv_scr_act(), NULL);
+  lv_obj_set_size(kb,  LV_HOR_RES, LV_VER_RES / 2);
+  lv_keyboard_set_cursor_manage(kb, true);
+  lv_keyboard_set_textarea(kb, ta_password);
+  lv_obj_set_event_cb(kb, keyboard_event_cb);
+  lv_obj_move_background(kb);
+}
+
+static void keyboard_event_cb(lv_obj_t * kb, lv_event_t event){
+  lv_keyboard_def_event_cb(kb, event);
+
+  if(event == LV_EVENT_APPLY){
+    lv_obj_move_background(kb);
+  }else if(event == LV_EVENT_CANCEL){
+    lv_obj_move_background(kb);
+  }
+}
+
+
+
+
+
+
+//  san wifi
+
