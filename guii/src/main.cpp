@@ -18,9 +18,6 @@ const char *password1 = "26316529";
 
 
 
-TaskHandle_t ntScanTaskHandler;
-TaskHandle_t ntConnectTaskHandler;
-
 unsigned long timeout = 10000; // 10sec
 
 WiFiUDP ntpUDP;
@@ -101,30 +98,24 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 }
 
 //  thiet ke lai tu dau
-void connectWIFI();
+
 void scanwifi();
-static lv_obj_t *ta_password;
+
 static lv_obj_t *bg_bottom;
 static lv_obj_t *bg_bottom2;
-static lv_obj_t *ddlist; // list wifi
-static lv_obj_t *kb;
- lv_obj_t *src2;
+lv_obj_t *ddlist;
+
+lv_obj_t *src2;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
-static lv_obj_t * mbox_connect;
-static void popupPWMsgBox();
-static void makePWMsgBox();
+
 void scanWIFITask(void *pvParameters);
+static void event_handler_k(lv_obj_t *obj, lv_event_t event);
 
-
-static void makeDropDownList(void);
-static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event);
-static void updateBottomStatus(lv_color_t color, String text);
-static void mbox_event_handler(lv_obj_t * obj, lv_event_t event);
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
-static void dd_event_handler(lv_obj_t *obj, lv_event_t event);
+void lv_ex_dropdown_1(void);
 static void iconwifi();
 static void time12(String text);
 static void lv_main();
@@ -133,9 +124,14 @@ static void timetest();
 static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
-void beginWIFITask(void *pvParameters);
-void networkScanner();
-static void makeKeyboard();
+
+
+// ban phim 
+static lv_obj_t * kb;
+static lv_obj_t * ta;
+
+void lv_ex_keyboard_1(void);
+static void kb_create(void);
 //
 
 void wifi()
@@ -169,10 +165,7 @@ void setup()
               NULL,
               2,
               NULL);
-                           
 }
-
-
 
 void guiTask(void *pvParameters)
 {
@@ -185,7 +178,7 @@ void guiTask(void *pvParameters)
   Serial.begin(9600); /* prepare for possible serial debug */
 
   // wifi
-  wifi();
+   wifi();
   timeClient.begin();
   //
 
@@ -230,7 +223,7 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-  
+
     checkwifi();
     lv_task_handler();
   }
@@ -387,7 +380,7 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
-      timetest();
+    timetest();
   }
 }
 
@@ -421,6 +414,13 @@ static void iconwifi()
   lv_obj_set_event_cb(imgright, event_handler1); // hanh dong
   lv_obj_align(imgright, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
 
+  lv_obj_t *namewifi = lv_label_create(src2, NULL);
+  lv_label_set_recolor(namewifi, true);
+  lv_label_set_text(namewifi, "#0000ff Lua chon wifi#");
+  lv_label_set_long_mode(namewifi, LV_LABEL_LONG_SROLL_CIRC);
+  lv_obj_set_width(namewifi, 100);
+  lv_obj_align(namewifi, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
+
   //  static lv_obj_t * bg_bottom;
 
   bg_bottom2 = lv_obj_create(src2, NULL);
@@ -435,16 +435,19 @@ static void iconwifi()
   lv_obj_set_width(label_status, LV_HOR_RES - 20);
   lv_label_set_text(label_status, "");
   lv_obj_align(label_status, NULL, LV_ALIGN_CENTER, 0, 0);
+  // list
+  ddlist = lv_dropdown_create(src2, NULL);
+  lv_obj_set_width(ddlist, 200);
+  lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID, 0, 25);
+  lv_obj_set_event_cb(ddlist, event_handler_k);
 
   //updateBottomStatus(LV_COLOR_GREEN, "Da ket noi Wifi");
 
-  
-    makeDropDownList();
-    makeKeyboard();
-    makePWMsgBox();
-
-  
-    
+  // makeKeyboard();
+  scanwifi();
+  //lv_ex_dropdown_1();
+ 
+     
 }
 
 static void event_handler1(lv_obj_t *obj, lv_event_t event)
@@ -460,142 +463,91 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
   }
 }
 
-
-
 //  san wifi
-void scanwifi(){
-//  WiFi.mode(WIFI_STA);
-//   WiFi.disconnect();
-//   Serial.println("Start scan");
+void scanwifi()
+{
+  //  WiFi.mode(WIFI_STA);
+  //   WiFi.disconnect();
+  //   Serial.println("Start scan");
   int n = WiFi.scanNetworks();
- 
-  if (n == 0) {
+
+  if (n == 0)
+  {
     Serial.println("no networks found");
-  } else {
+  }
+  else
+  {
     Serial.print(n);
     Serial.println(" networks found");
-       lv_dropdown_clear_options(ddlist);  
-       for (int i = 0; i < n; ++i) {               
-        String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) +") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+    lv_dropdown_clear_options(ddlist);
+    for (int i = 0; i < n; ++i)
+    {
 
-        lv_dropdown_add_option(ddlist,item.c_str(),LV_DROPDOWN_POS_LAST);
-        
-         makePWMsgBox();
-        
-       delay(50);
+      String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) + ") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
 
-      }
-  Serial.println("Scan done");
-  Serial.println("");
+      lv_dropdown_add_option(ddlist, item.c_str(), LV_DROPDOWN_POS_LAST);
+
+      Serial.println(item);
+      delay(50);
+    }
+    Serial.println("Scan done");
+    Serial.println("");
+  }
+}
+
+//
+
+static void event_handler_k(lv_obj_t *obj, lv_event_t event)
+{
+  if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    char buf[32];
+    lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
+
+    printf("Option: %s\n", buf);
+    lv_ex_keyboard_1();
+  }
+}
 
 
-}}
-
-
-static void dd_event_handler(lv_obj_t * obj, lv_event_t event){
-  
-  if(event == LV_EVENT_VALUE_CHANGED) {
-        char buf[32];
-        lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        ssidName = String(buf);
-        
-        for (int i = 0; i < ssidName.length()-1; i++) {
-          if (ssidName.substring(i, i+2) == " (") {
-              ssidName = ssidName.substring(0, i);
-            break;
-          }
-        }
-        
-        scanwifi();
+static void kb_event_cb(lv_obj_t * keyboard, lv_event_t e)
+{
+    lv_keyboard_def_event_cb(kb, e);
+    if(e == LV_EVENT_CANCEL) {
+         lv_keyboard_set_textarea(kb, NULL);
+        lv_obj_del(kb);
+         lv_obj_del(ta);
+        kb = NULL;
+        ta= NULL;
     }
 }
 
-
-// 
-static void makeKeyboard()
+static void kb_create(void)
 {
-  kb = lv_keyboard_create(lv_scr_act(), NULL);
-  lv_obj_set_size(kb, LV_HOR_RES, LV_VER_RES / 2);
-  lv_keyboard_set_cursor_manage(kb, true);
-  lv_keyboard_set_textarea(kb, ta_password);
-  lv_obj_set_event_cb(kb, keyboard_event_cb);
-  lv_obj_move_background(kb);
+    kb = lv_keyboard_create(src2, NULL);
+    lv_keyboard_set_cursor_manage(kb, true);
+    lv_obj_set_event_cb(kb, kb_event_cb);
+    lv_keyboard_set_textarea(kb, ta);
+
 }
 
-static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event)
+static void ta_event_cb(lv_obj_t * ta_local, lv_event_t e)
 {
-  lv_keyboard_def_event_cb(kb, event);
-
-  if (event == LV_EVENT_APPLY)
-  {
-    lv_obj_move_background(kb);
-  }
-  else if (event == LV_EVENT_CANCEL)
-  {
-    lv_obj_move_background(kb);
-  }
-}
-static void updateBottomStatus(lv_color_t color, String text){
-  lv_obj_set_style_local_bg_color(bg_bottom, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,color);
-  lv_label_set_text(label_status, text.c_str());
-}
-
-static void makeDropDownList(void){
-
-    ddlist = lv_dropdown_create(src2, NULL);
-    lv_dropdown_set_show_selected(ddlist, false);
-    lv_dropdown_set_text(ddlist, "WIFI");
-    lv_dropdown_set_options(ddlist, "...Searching...");
-    lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
-    lv_obj_set_event_cb(ddlist, dd_event_handler);
-}
-
-
-static void makePWMsgBox(){
-  mbox_connect = lv_msgbox_create(lv_scr_act(), NULL);
-  static const char * btns[] ={"Connect", "Cancel", ""};
-  
-  ta_password = lv_textarea_create(mbox_connect, NULL);
-  lv_obj_set_size(ta_password, 200, 40);
-  lv_textarea_set_text(ta_password, "");
-
-
-  lv_msgbox_add_btns(mbox_connect, btns);
-  lv_obj_set_width(mbox_connect, 200);
-  lv_obj_set_event_cb(mbox_connect, mbox_event_handler);
-  lv_obj_align(mbox_connect, NULL, LV_ALIGN_CENTER, 0, -90);
-  lv_obj_move_background(mbox_connect);
-}
-
-static void mbox_event_handler(lv_obj_t * obj, lv_event_t event){
-    if(event == LV_EVENT_VALUE_CHANGED) {
-      lv_obj_move_background(kb);
-      lv_obj_set_hidden(mbox_connect,100);
-      lv_obj_set_hidden(kb,100);
-      
-          if(strcmp(lv_msgbox_get_active_btn_text(obj), "Connect")==0){
-            password = lv_textarea_get_text(ta_password);
-            password.trim();
-      
-          }
-    
+    if(e == LV_EVENT_CLICKED && kb == NULL) {
+        kb_create();
+     
     }
 }
 
-static void popupPWMsgBox(){
-  if(ssidName == NULL || ssidName.length() == 0){
-    return;
-  }
+void lv_ex_keyboard_1(void)
+{
 
-    lv_textarea_set_text(ta_password, ""); 
-    lv_msgbox_set_text(mbox_connect, ssidName.c_str());
-    lv_obj_move_foreground(mbox_connect);
-    
-    lv_obj_move_foreground(kb);
-    lv_keyboard_set_textarea(kb, ta_password);
+    /*Create a text area. The keyboard will write here*/
+    ta  = lv_textarea_create(src2, NULL);
+    lv_obj_align(ta, NULL, LV_ALIGN_CENTER, 0, LV_DPI / 4);
+    lv_obj_set_event_cb(ta, ta_event_cb);
+    lv_textarea_set_text(ta, "");
+    lv_obj_set_size(ta,250,30);
+    kb_create();
+
 }
-
-/*
- * NETWORK TASKS
- */
-
