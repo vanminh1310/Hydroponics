@@ -12,9 +12,9 @@
 #include <NTPClient.h>
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
-
+String ssidName, password;
 const char *ssid = "MF150_1B8B";
-const char *password = "26316529";
+const char *password1 = "26316529";
 
 unsigned long timeout = 10000; // 10sec
 
@@ -108,6 +108,7 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 
 //  thiet ke lai tu dau
 void connectWIFI();
+void scanwifi();
 static lv_obj_t *ta_password;
 static lv_obj_t *bg_bottom;
 static lv_obj_t *bg_bottom2;
@@ -115,9 +116,13 @@ static lv_obj_t *ddlist; // list wifi
 static lv_obj_t *kb;
 static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event);
 static void updateBottomStatus(lv_color_t color, String text);
+static void mbox_event_handler(lv_obj_t * obj, lv_event_t event);
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
+static lv_obj_t * mbox_connect;
+static void popupPWMsgBox();
+
 
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
@@ -140,7 +145,7 @@ static void makeKeyboard();
 void wifi()
 {
   int i = 0;
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password1);
 
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -226,7 +231,7 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-    timetest();
+  
     checkwifi();
     lv_task_handler();
   }
@@ -383,6 +388,7 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+      timetest();
   }
 }
 
@@ -465,16 +471,24 @@ static void updateBottomStatus(lv_color_t color, String text)
 }
 // su kien danh sach
 
-static void dd_event_handler(lv_obj_t *obj, lv_event_t event)
-{
-
-  if (event == LV_EVENT_VALUE_CHANGED)
-  {
-    lv_obj_set_hidden(bg_bottom2, 100);
-    makeKeyboard();
-
-    //popupPWMsgBox();
-  }
+static void dd_event_handler(lv_obj_t * obj, lv_event_t event){
+  
+  if(event == LV_EVENT_VALUE_CHANGED) {
+        char buf[32];
+        lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
+        ssidName = String(buf);
+        
+        for (int i = 0; i < ssidName.length()-1; i++) {
+          if (ssidName.substring(i, i+2) == " (") {
+              ssidName = ssidName.substring(0, i);
+            break;
+          }
+        }
+          scanwifi();
+        
+        // popupPWMsgBox();
+     
+    }
 }
 
 //
@@ -503,3 +517,70 @@ static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event)
 }
 
 //  san wifi
+void scanwifi(){
+//  WiFi.mode(WIFI_STA);
+//   WiFi.disconnect();
+//   Serial.println("Start scan");
+  int n = WiFi.scanNetworks();
+ 
+  if (n == 0) {
+    Serial.println("no networks found");
+  } else {
+    Serial.print(n);
+    Serial.println(" networks found");
+       lv_dropdown_clear_options(ddlist);  
+       for (int i = 0; i < n; ++i) {               
+        String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) +") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+        lv_dropdown_add_option(ddlist,item.c_str(),LV_DROPDOWN_POS_LAST);
+       delay(50);
+
+      }
+  Serial.println("Scan done");
+  Serial.println("");
+
+
+}
+}
+
+static void makePWMsgBox(){
+  mbox_connect = lv_msgbox_create(lv_scr_act(), NULL);
+  static const char * btns[] ={"Connect", "Cancel", ""};
+  
+  ta_password = lv_textarea_create(mbox_connect, NULL);
+  lv_obj_set_size(ta_password, 200, 40);
+  lv_textarea_set_text(ta_password, "");
+
+
+  lv_msgbox_add_btns(mbox_connect, btns);
+  lv_obj_set_width(mbox_connect, 200);
+  lv_obj_set_event_cb(mbox_connect, mbox_event_handler);
+  lv_obj_align(mbox_connect, NULL, LV_ALIGN_CENTER, 0, -90);
+  lv_obj_move_background(mbox_connect);
+}
+
+static void mbox_event_handler(lv_obj_t * obj, lv_event_t event){
+    if(event == LV_EVENT_VALUE_CHANGED) {
+      lv_obj_move_background(kb);
+      lv_obj_move_background(mbox_connect);
+      
+          if(strcmp(lv_msgbox_get_active_btn_text(obj), "Connect")==0){
+            password = lv_textarea_get_text(ta_password);
+            password.trim();
+            connectWIFI();
+          }
+    
+    }
+}
+
+static void popupPWMsgBox(){
+  if(ssidName == NULL || ssidName.length() == 0){
+    return;
+  }
+
+    lv_textarea_set_text(ta_password, ""); 
+    lv_msgbox_set_text(mbox_connect, ssidName.c_str());
+    lv_obj_move_foreground(mbox_connect);
+    
+    lv_obj_move_foreground(kb);
+    lv_keyboard_set_textarea(kb, ta_password);
+}
