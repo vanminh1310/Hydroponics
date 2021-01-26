@@ -16,6 +16,11 @@ String ssidName, password;
 const char *ssid = "MF150_1B8B";
 const char *password1 = "26316529";
 
+
+
+TaskHandle_t ntScanTaskHandler;
+TaskHandle_t ntConnectTaskHandler;
+
 unsigned long timeout = 10000; // 10sec
 
 WiFiUDP ntpUDP;
@@ -88,19 +93,8 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
   {
 
     data->state = touched ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
-
-    /*Save the state and save the pressed coordinate*/
-    //if(data->state == LV_INDEV_STATE_PR) touchpad_get_xy(&last_x, &last_y);
-
-    /*Set the coordinates (if released use the last pressed coordinates)*/
     data->point.x = touchX;
     data->point.y = touchY;
-
-    //Serial.print("Data x");
-    //Serial.println(touchX);
-
-    // Serial.print("Data y");
-    // Serial.println(touchY);
   }
 
   return false; /*Return `false` because we are not buffering and no more data to read*/
@@ -114,20 +108,24 @@ static lv_obj_t *bg_bottom;
 static lv_obj_t *bg_bottom2;
 static lv_obj_t *ddlist; // list wifi
 static lv_obj_t *kb;
-static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event);
-static void updateBottomStatus(lv_color_t color, String text);
-static void mbox_event_handler(lv_obj_t * obj, lv_event_t event);
+ lv_obj_t *src2;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
 static lv_obj_t * mbox_connect;
 static void popupPWMsgBox();
+static void makePWMsgBox();
+void scanWIFITask(void *pvParameters);
 
 
+static void makeDropDownList(void);
+static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event);
+static void updateBottomStatus(lv_color_t color, String text);
+static void mbox_event_handler(lv_obj_t * obj, lv_event_t event);
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
+static void dd_event_handler(lv_obj_t *obj, lv_event_t event);
 static void iconwifi();
-
 static void time12(String text);
 static void lv_main();
 const char *test;
@@ -135,10 +133,8 @@ static void timetest();
 static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
-
 void beginWIFITask(void *pvParameters);
-
-static void dd_event_handler(lv_obj_t *obj, lv_event_t event);
+void networkScanner();
 static void makeKeyboard();
 //
 
@@ -173,7 +169,10 @@ void setup()
               NULL,
               2,
               NULL);
+                           
 }
+
+
 
 void guiTask(void *pvParameters)
 {
@@ -406,7 +405,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 }
 static void iconwifi()
 {
-  lv_obj_t *src2 = lv_obj_create(NULL, NULL); // tao va load man hinh moi
+  src2 = lv_obj_create(NULL, NULL); // tao va load man hinh moi
   lv_scr_load(src2);
   lv_obj_set_style_local_bg_color(src2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
   //  img back
@@ -439,16 +438,13 @@ static void iconwifi()
 
   //updateBottomStatus(LV_COLOR_GREEN, "Da ket noi Wifi");
 
-  // list
-  ddlist = lv_dropdown_create(src2, NULL);
-  lv_dropdown_set_show_selected(ddlist, false);
-  lv_dropdown_set_text(ddlist, "WIFI");
-  lv_dropdown_set_options(ddlist, "...Searching...");
-  lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);
-  lv_obj_set_event_cb(ddlist, dd_event_handler);
+  
+    makeDropDownList();
+    makeKeyboard();
+    makePWMsgBox();
 
-  //makeKeyboard();
-  //makePWMsgBox();
+  
+    
 }
 
 static void event_handler1(lv_obj_t *obj, lv_event_t event)
@@ -464,12 +460,37 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
   }
 }
 
-static void updateBottomStatus(lv_color_t color, String text)
-{
-  lv_obj_set_style_local_bg_color(bg_bottom2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, color);
-  lv_label_set_text(label_status, text.c_str());
-}
-// su kien danh sach
+
+
+//  san wifi
+void scanwifi(){
+//  WiFi.mode(WIFI_STA);
+//   WiFi.disconnect();
+//   Serial.println("Start scan");
+  int n = WiFi.scanNetworks();
+ 
+  if (n == 0) {
+    Serial.println("no networks found");
+  } else {
+    Serial.print(n);
+    Serial.println(" networks found");
+       lv_dropdown_clear_options(ddlist);  
+       for (int i = 0; i < n; ++i) {               
+        String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) +") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+
+        lv_dropdown_add_option(ddlist,item.c_str(),LV_DROPDOWN_POS_LAST);
+        
+         makePWMsgBox();
+        
+       delay(50);
+
+      }
+  Serial.println("Scan done");
+  Serial.println("");
+
+
+}}
+
 
 static void dd_event_handler(lv_obj_t * obj, lv_event_t event){
   
@@ -484,14 +505,13 @@ static void dd_event_handler(lv_obj_t * obj, lv_event_t event){
             break;
           }
         }
-          scanwifi();
         
-        // popupPWMsgBox();
-     
+        scanwifi();
     }
 }
 
-//
+
+// 
 static void makeKeyboard()
 {
   kb = lv_keyboard_create(lv_scr_act(), NULL);
@@ -515,32 +535,21 @@ static void keyboard_event_cb(lv_obj_t *kb, lv_event_t event)
     lv_obj_move_background(kb);
   }
 }
-
-//  san wifi
-void scanwifi(){
-//  WiFi.mode(WIFI_STA);
-//   WiFi.disconnect();
-//   Serial.println("Start scan");
-  int n = WiFi.scanNetworks();
- 
-  if (n == 0) {
-    Serial.println("no networks found");
-  } else {
-    Serial.print(n);
-    Serial.println(" networks found");
-       lv_dropdown_clear_options(ddlist);  
-       for (int i = 0; i < n; ++i) {               
-        String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) +") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
-        lv_dropdown_add_option(ddlist,item.c_str(),LV_DROPDOWN_POS_LAST);
-       delay(50);
-
-      }
-  Serial.println("Scan done");
-  Serial.println("");
-
-
+static void updateBottomStatus(lv_color_t color, String text){
+  lv_obj_set_style_local_bg_color(bg_bottom, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,color);
+  lv_label_set_text(label_status, text.c_str());
 }
+
+static void makeDropDownList(void){
+
+    ddlist = lv_dropdown_create(src2, NULL);
+    lv_dropdown_set_show_selected(ddlist, false);
+    lv_dropdown_set_text(ddlist, "WIFI");
+    lv_dropdown_set_options(ddlist, "...Searching...");
+    lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
+    lv_obj_set_event_cb(ddlist, dd_event_handler);
 }
+
 
 static void makePWMsgBox(){
   mbox_connect = lv_msgbox_create(lv_scr_act(), NULL);
@@ -561,12 +570,13 @@ static void makePWMsgBox(){
 static void mbox_event_handler(lv_obj_t * obj, lv_event_t event){
     if(event == LV_EVENT_VALUE_CHANGED) {
       lv_obj_move_background(kb);
-      lv_obj_move_background(mbox_connect);
+      lv_obj_set_hidden(mbox_connect,100);
+      lv_obj_set_hidden(kb,100);
       
           if(strcmp(lv_msgbox_get_active_btn_text(obj), "Connect")==0){
             password = lv_textarea_get_text(ta_password);
             password.trim();
-            connectWIFI();
+      
           }
     
     }
@@ -584,3 +594,8 @@ static void popupPWMsgBox(){
     lv_obj_move_foreground(kb);
     lv_keyboard_set_textarea(kb, ta_password);
 }
+
+/*
+ * NETWORK TASKS
+ */
+
