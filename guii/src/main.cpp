@@ -13,10 +13,9 @@
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
 String ssidName, password;
-const char *ssid = "MF150_1B8B";
-const char *password1 = "26316529";
 
-
+const char *ssid;
+const char *password1;
 
 unsigned long timeout = 10000; // 10sec
 
@@ -124,11 +123,11 @@ static void timetest();
 static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
+void ketnoi();
 
-
-// ban phim 
-static lv_obj_t * kb;
-static lv_obj_t * ta;
+// ban phim
+static lv_obj_t *kb;
+static lv_obj_t *ta;
 
 void lv_ex_keyboard_1(void);
 static void kb_create(void);
@@ -146,7 +145,7 @@ void wifi()
     //    Serial.println(i);
     delay(50);
     Serial.print(".");
-    if (i == 10)
+    if (i == 50)
     {
       i = 0;
 
@@ -178,8 +177,8 @@ void guiTask(void *pvParameters)
   Serial.begin(9600); /* prepare for possible serial debug */
 
   // wifi
-   wifi();
-  timeClient.begin();
+  //wifi();
+
   //
 
   lv_init();
@@ -224,7 +223,8 @@ void guiTask(void *pvParameters)
   while (1)
   {
 
-    checkwifi();
+    timetest();
+
     lv_task_handler();
   }
 }
@@ -356,10 +356,12 @@ static void lv_main()
 
   lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+   checkwifi();
 }
 
 static void timetest()
 {
+  timeClient.begin();
   timeClient.update();
   String time = timeClient.getFormattedTime();
   time12(time);
@@ -380,7 +382,7 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
-    timetest();
+    
   }
 }
 
@@ -446,8 +448,6 @@ static void iconwifi()
   // makeKeyboard();
   scanwifi();
   //lv_ex_dropdown_1();
- 
-     
 }
 
 static void event_handler1(lv_obj_t *obj, lv_event_t event)
@@ -483,10 +483,12 @@ void scanwifi()
     for (int i = 0; i < n; ++i)
     {
 
-      String item = WiFi.SSID(i) + " (" + WiFi.RSSI(i) + ") " + ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+      String item = WiFi.SSID(i);
 
       lv_dropdown_add_option(ddlist, item.c_str(), LV_DROPDOWN_POS_LAST);
 
+      // ssidName = WiFi.SSID(i);
+      // Serial.println(ssidName);
       Serial.println(item);
       delay(50);
     }
@@ -503,51 +505,75 @@ static void event_handler_k(lv_obj_t *obj, lv_event_t event)
   {
     char buf[32];
     lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-
+    ssidName = String(buf);
+    Serial.println(ssidName);
     printf("Option: %s\n", buf);
     lv_ex_keyboard_1();
   }
 }
 
-
-static void kb_event_cb(lv_obj_t * keyboard, lv_event_t e)
+static void kb_event_cb(lv_obj_t *keyboard, lv_event_t e)
 {
-    lv_keyboard_def_event_cb(kb, e);
-    if(e == LV_EVENT_CANCEL) {
-         lv_keyboard_set_textarea(kb, NULL);
-        lv_obj_del(kb);
-         lv_obj_del(ta);
-        kb = NULL;
-        ta= NULL;
-    }
+  lv_keyboard_def_event_cb(kb, e);
+  if (e == LV_EVENT_CANCEL)
+  {
+    lv_keyboard_set_textarea(kb, NULL);
+    lv_obj_del(kb);
+    lv_obj_del(ta);
+    kb = NULL;
+    ta = NULL;
+  }
+
+  if (e == LV_EVENT_APPLY)
+  {
+    password = lv_textarea_get_text(ta);
+    lv_keyboard_set_textarea(kb, NULL);
+    lv_obj_del(kb);
+    kb = NULL;
+    Serial.println(password);
+    ketnoi();
+  }
 }
 
 static void kb_create(void)
 {
-    kb = lv_keyboard_create(src2, NULL);
-    lv_keyboard_set_cursor_manage(kb, true);
-    lv_obj_set_event_cb(kb, kb_event_cb);
-    lv_keyboard_set_textarea(kb, ta);
-
+  kb = lv_keyboard_create(src2, NULL);
+  lv_keyboard_set_cursor_manage(kb, true);
+  lv_obj_set_event_cb(kb, kb_event_cb);
+  lv_keyboard_set_textarea(kb, ta);
 }
 
-static void ta_event_cb(lv_obj_t * ta_local, lv_event_t e)
+static void ta_event_cb(lv_obj_t *ta_local, lv_event_t e)
 {
-    if(e == LV_EVENT_CLICKED && kb == NULL) {
-        kb_create();
-     
-    }
+  if (e == LV_EVENT_CLICKED && kb == NULL)
+  {
+    kb_create();
+  }
 }
 
 void lv_ex_keyboard_1(void)
 {
 
-    /*Create a text area. The keyboard will write here*/
-    ta  = lv_textarea_create(src2, NULL);
-    lv_obj_align(ta, NULL, LV_ALIGN_CENTER, 0, LV_DPI / 4);
-    lv_obj_set_event_cb(ta, ta_event_cb);
-    lv_textarea_set_text(ta, "");
-    lv_obj_set_size(ta,250,30);
-    kb_create();
+  /*Create a text area. The keyboard will write here*/
+  ta = lv_textarea_create(src2, NULL);
+  lv_obj_align(ta, NULL, LV_ALIGN_CENTER, 0, LV_DPI / 4);
+  lv_obj_set_event_cb(ta, ta_event_cb);
+  lv_textarea_set_text(ta, "");
+  lv_obj_set_size(ta, 250, 30);
+  kb_create();
+}
+void ketnoi()
+{
 
+  WiFi.begin(ssidName.c_str(), password.c_str());
+
+  Serial.println(ssidName.c_str());
+  Serial.println(password.c_str());
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  // Serial.println("da ket noi");
+  //lv_main();
 }
