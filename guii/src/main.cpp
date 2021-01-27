@@ -222,9 +222,7 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-
-    timetest();
-
+     checkwifi();
     lv_task_handler();
   }
 }
@@ -356,11 +354,12 @@ static void lv_main()
 
   lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
-   checkwifi();
+ 
 }
 
 static void timetest()
 {
+  
   timeClient.begin();
   timeClient.update();
   String time = timeClient.getFormattedTime();
@@ -377,12 +376,12 @@ static void checkwifi()
   if (WiFi.status() != WL_CONNECTED)
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
-    wifi();
+    
   }
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
-    
+    timetest();
   }
 }
 
@@ -390,7 +389,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 {
   if (event == LV_EVENT_CLICKED)
   {
-    printf("Test\n");
+    printf("iconwifi\n");
     iconwifi();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
@@ -454,7 +453,7 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
 {
   if (event == LV_EVENT_CLICKED)
   {
-    printf("Test\n");
+    printf("back\n");
     lv_main();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
@@ -564,16 +563,30 @@ void lv_ex_keyboard_1(void)
 }
 void ketnoi()
 {
-
+  int i = 0;
   WiFi.begin(ssidName.c_str(), password.c_str());
 
   Serial.println(ssidName.c_str());
   Serial.println(password.c_str());
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
+    i++;
+    delay(100);
     Serial.print(".");
+    if (i == 50)
+    {
+      i = 0;
+      Serial.println("mat khau khong dung xin vui long thu lai");
+      break;
+    }
   }
-  // Serial.println("da ket noi");
-  //lv_main();
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.println("mat khau khong dung xin vui long thu lai");
+  }
+  else
+  {
+    lv_main();
+    timetest();
+  }
 }
