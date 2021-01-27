@@ -103,7 +103,7 @@ void scanwifi();
 static lv_obj_t *bg_bottom;
 static lv_obj_t *bg_bottom2;
 lv_obj_t *ddlist;
-
+lv_obj_t *namewifi;
 lv_obj_t *src2;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
@@ -415,11 +415,11 @@ static void iconwifi()
   lv_obj_set_event_cb(imgright, event_handler1); // hanh dong
   lv_obj_align(imgright, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
 
-  lv_obj_t *namewifi = lv_label_create(src2, NULL);
+  namewifi = lv_label_create(src2, NULL);
   lv_label_set_recolor(namewifi, true);
   lv_label_set_text(namewifi, "#0000ff Lua chon wifi#");
   lv_label_set_long_mode(namewifi, LV_LABEL_LONG_SROLL_CIRC);
-  lv_obj_set_width(namewifi, 100);
+  lv_obj_set_width(namewifi, 150);
   lv_obj_align(namewifi, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 
   //  static lv_obj_t * bg_bottom;
@@ -577,12 +577,14 @@ void ketnoi()
     {
       i = 0;
       Serial.println("mat khau khong dung xin vui long thu lai");
+
       break;
     }
   }
   if (WiFi.status() != WL_CONNECTED)
   {
     Serial.println("mat khau khong dung xin vui long thu lai");
+     lv_label_set_text(namewifi, "#ff0000 Mat khau sai vui long nhap lai#");
   }
   else
   {
