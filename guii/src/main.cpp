@@ -1,3 +1,4 @@
+#include <EEPROM.h>
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include "v.c" //icon wifi
@@ -97,7 +98,10 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 }
 
 //  thiet ke lai tu dau
-
+// EEPROM
+boolean readeeprom();
+static void writeeeprom();
+//
 void scanwifi();
 
 static lv_obj_t *bg_bottom;
@@ -164,6 +168,7 @@ void setup()
               NULL,
               2,
               NULL);
+            
 }
 
 void guiTask(void *pvParameters)
@@ -175,11 +180,9 @@ void guiTask(void *pvParameters)
   ledcWrite(10, 768);
 
   Serial.begin(9600); /* prepare for possible serial debug */
-
-  // wifi
-  //wifi();
-
-  //
+  EEPROM.begin(512);
+ 
+  readeeprom();  
 
   lv_init();
 
@@ -222,7 +225,7 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-     checkwifi();
+    checkwifi();
     lv_task_handler();
   }
 }
@@ -359,7 +362,7 @@ static void lv_main()
 
 static void timetest()
 {
-  
+
   timeClient.begin();
   timeClient.update();
   String time = timeClient.getFormattedTime();
@@ -563,6 +566,7 @@ void lv_ex_keyboard_1(void)
 }
 void ketnoi()
 {
+
   int i = 0;
   WiFi.begin(ssidName.c_str(), password.c_str());
 
@@ -584,11 +588,69 @@ void ketnoi()
   if (WiFi.status() != WL_CONNECTED)
   {
     Serial.println("mat khau khong dung xin vui long thu lai");
-     lv_label_set_text(namewifi, "#ff0000 Mat khau sai vui long nhap lai#");
+    lv_label_set_text(namewifi, "#ff0000 Mat khau sai vui long nhap lai#");
   }
   else
-  {
+  { 
+    writeeeprom();
     lv_main();
     timetest();
   }
+}
+static void writeeeprom()
+{
+   
+   Serial.println(ssidName.c_str());
+  Serial.println(password.c_str());
+  for (int i = 0; i < 96; ++i)
+  {
+    EEPROM.write(i, 0); //xoa bo nho EEPROM
+  }
+  Serial.println("Writing SSID to EEPROM...");
+  for (int i = 0; i < ssidName.length(); ++i)
+  {
+    EEPROM.write(i, ssidName[i]);
+  }
+  Serial.println("Writing Password to EEPROM...");
+  for (int i = 0; i < password.length(); ++i)
+  {
+    EEPROM.write(32 + i, password[i]);
+  }
+  EEPROM.commit();
+  Serial.println("Write EEPROM done!");
+}
+boolean readeeprom(){
+  Serial.println("Reading EEPROM...");
+  String ssid = "";
+  String pass = "";
+  int i = 0;
+  if (EEPROM.read(0) != 0) {                      //neu duu lieu doc ra tu EEPROM khac 0 thi doc du lieu
+    for (int i = 0; i < 32; ++i) {                //32 o nho dau tieu la chua ten mang wifi SSID
+      ssid += char(EEPROM.read(i));
+    }
+    Serial.print("SSID: ");
+    Serial.println(ssid.c_str());
+    for (int i = 32; i < 96; ++i) {               //o nho tu 32 den 96 la chua PASSWORD
+      pass += char(EEPROM.read(i));
+    }
+    Serial.print("Password: ");
+    Serial.println(pass.c_str());
+    WiFi.begin(ssid.c_str(), pass.c_str()); 
+          //ket noi voi mang WIFI duoc luu trong EEPROM
+    while (WiFi.status() != WL_CONNECTED)
+  {
+    i++;
+    delay(100);
+    Serial.print(".");
+    if (i == 50)
+    {
+      i = 0;
+      Serial.println("mat khau khong dung xin vui long thu lai");
+
+      break;
+    }
+  }
+  
+  }
+ 
 }
