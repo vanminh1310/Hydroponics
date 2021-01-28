@@ -103,19 +103,20 @@ boolean readeeprom();
 static void writeeeprom();
 //
 void scanwifi();
-
+static void btnscan();
 static lv_obj_t *bg_bottom;
 static lv_obj_t *bg_bottom2;
 lv_obj_t *ddlist;
 lv_obj_t *namewifi;
 lv_obj_t *src2;
+ lv_obj_t *btscan;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
 
 void scanWIFITask(void *pvParameters);
 static void event_handler_k(lv_obj_t *obj, lv_event_t event);
-
+static void event_btnscanwifi(lv_obj_t *obj, lv_event_t event);
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
 void lv_ex_dropdown_1(void);
@@ -168,7 +169,8 @@ void setup()
               NULL,
               2,
               NULL);
-            
+    EEPROM.begin(512);    
+     readeeprom();      
 }
 
 void guiTask(void *pvParameters)
@@ -180,9 +182,12 @@ void guiTask(void *pvParameters)
   ledcWrite(10, 768);
 
   Serial.begin(9600); /* prepare for possible serial debug */
-  EEPROM.begin(512);
+ readeeprom();  
  
-  readeeprom();  
+//  for (int i = 0; i < 96; ++i)
+//   {
+//     EEPROM.write(i, 0); //xoa bo nho EEPROM
+//   }
 
   lv_init();
 
@@ -357,6 +362,7 @@ static void lv_main()
 
   lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+    lv_label_set_text(label_time, "00.00.00");
  
 }
 
@@ -420,9 +426,9 @@ static void iconwifi()
 
   namewifi = lv_label_create(src2, NULL);
   lv_label_set_recolor(namewifi, true);
-  lv_label_set_text(namewifi, "#0000ff Lua chon wifi#");
+  lv_label_set_text(namewifi, "#0000ff Lua chon wifi #");
   lv_label_set_long_mode(namewifi, LV_LABEL_LONG_SROLL_CIRC);
-  lv_obj_set_width(namewifi, 150);
+  lv_obj_set_width(namewifi, 120);
   lv_obj_align(namewifi, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 
   //  static lv_obj_t * bg_bottom;
@@ -442,15 +448,45 @@ static void iconwifi()
   // list
   ddlist = lv_dropdown_create(src2, NULL);
   lv_obj_set_width(ddlist, 200);
+    lv_dropdown_set_show_selected(ddlist, true);
+  lv_dropdown_set_text(ddlist, "WIFI");
   lv_obj_align(ddlist, NULL, LV_ALIGN_IN_TOP_MID, 0, 25);
   lv_obj_set_event_cb(ddlist, event_handler_k);
 
+// button scan wifi 
+
+btnscan();
   //updateBottomStatus(LV_COLOR_GREEN, "Da ket noi Wifi");
 
   // makeKeyboard();
   scanwifi();
   //lv_ex_dropdown_1();
 }
+
+// btn scanwifi
+static void btnscan(){
+ btscan = lv_btn_create(src2,NULL);
+   lv_obj_set_event_cb(btscan, event_btnscanwifi);
+    lv_obj_align(btscan, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_t*label = lv_label_create(btscan, NULL);
+    lv_label_set_text(label, "Scan Wifi");
+}
+
+static void event_btnscanwifi(lv_obj_t *obj, lv_event_t event)
+{
+  if (event == LV_EVENT_CLICKED)
+  {
+  //  readeeprom();
+   scanwifi();
+  }
+  else if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    printf("tests22222\n");
+  }
+}
+
+// 
+
 
 static void event_handler1(lv_obj_t *obj, lv_event_t event)
 {
@@ -468,8 +504,10 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
 //  san wifi
 void scanwifi()
 {
-  //  WiFi.mode(WIFI_STA);
-  //   WiFi.disconnect();
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+
+    
   //   Serial.println("Start scan");
   int n = WiFi.scanNetworks();
 
@@ -510,7 +548,9 @@ static void event_handler_k(lv_obj_t *obj, lv_event_t event)
     ssidName = String(buf);
     Serial.println(ssidName);
     printf("Option: %s\n", buf);
+    lv_obj_set_hidden(btscan,100);
     lv_ex_keyboard_1();
+    
   }
 }
 
@@ -524,6 +564,7 @@ static void kb_event_cb(lv_obj_t *keyboard, lv_event_t e)
     lv_obj_del(ta);
     kb = NULL;
     ta = NULL;
+  btnscan();
   }
 
   if (e == LV_EVENT_APPLY)
@@ -592,7 +633,8 @@ void ketnoi()
   }
   else
   { 
-    writeeeprom();
+    
+   writeeeprom();
     lv_main();
     timetest();
   }
@@ -646,9 +688,19 @@ boolean readeeprom(){
     {
       i = 0;
       Serial.println("mat khau khong dung xin vui long thu lai");
-
       break;
     }
+  }
+   if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.println("mat khau khong dung xin vui long thu lai");
+     lv_label_set_text(namewifi, "#FF0000 No Connected #");
+   
+  }
+  else
+  { 
+   lv_label_set_text(namewifi, "#32CD32 Connected #");
+    iconwifi();
   }
   
   }
