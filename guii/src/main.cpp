@@ -101,6 +101,8 @@ bool my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 // EEPROM
 boolean readeeprom();
 static void writeeeprom();
+static void iconespnow();
+lv_obj_t *espnow;
 //
 void scanwifi();
 static void btnscan();
@@ -113,7 +115,7 @@ lv_obj_t *btscan;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
-
+static void event_espnow(lv_obj_t *obj, lv_event_t event);
 void scanWIFITask(void *pvParameters);
 static void event_handler_k(lv_obj_t *obj, lv_event_t event);
 static void event_btnscanwifi(lv_obj_t *obj, lv_event_t event);
@@ -311,10 +313,13 @@ static void lv_main()
   // hostpost
   lv_obj_t *imghost = lv_img_create(tab2, NULL);
   lv_img_set_src(imghost, &host);
+    lv_obj_set_click(imghost, true);
+  lv_obj_set_event_cb(imghost, event_espnow);
   lv_obj_align(imghost, NULL, LV_ALIGN_CENTER, 0, 15);
 
   lv_obj_t *img24 = lv_label_create(tab2, NULL);
   lv_label_set_text(img24, "Esp Now");
+
   lv_obj_align(img24, NULL, LV_ALIGN_CENTER, 0, 50);
 
   //
@@ -701,5 +706,24 @@ boolean readeeprom()
     {
       lv_label_set_text(namewifi, "#32CD32 Connected #");
     }
+  }
+}
+// icon espnow
+static void iconespnow(){
+  espnow = lv_obj_create(NULL, NULL); // tao va load man hinh moi
+  lv_scr_load(espnow);
+  lv_obj_set_style_local_bg_color(espnow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+}
+static void event_espnow(lv_obj_t *obj, lv_event_t event)
+{
+  if (event == LV_EVENT_CLICKED)
+  {
+    printf("espnow\n");
+    iconespnow();
+  }
+  else if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    printf("tests22222\n");
   }
 }
