@@ -112,6 +112,7 @@ lv_obj_t *ddlist;
 lv_obj_t *namewifi;
 lv_obj_t *src2;
 lv_obj_t *btscan;
+lv_obj_t *dataesp;
 static lv_obj_t *label_time;
 static lv_obj_t *label_icon_wifi;
 static lv_obj_t *label_status;
@@ -713,6 +714,14 @@ static void iconespnow(){
   espnow = lv_obj_create(NULL, NULL); // tao va load man hinh moi
   lv_scr_load(espnow);
   lv_obj_set_style_local_bg_color(espnow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+// icon back
+    lv_obj_t *imgback = lv_img_create(espnow, NULL);
+  lv_img_set_src(imgback, &back50);
+  lv_obj_set_click(imgback, true);
+  lv_obj_set_event_cb(imgback, event_handler1);
+  lv_obj_align(imgback, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+  
+
 
 }
 static void event_espnow(lv_obj_t *obj, lv_event_t event)
