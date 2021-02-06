@@ -131,15 +131,20 @@ static void timetest();
 static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
+void readdata(void*pvParameters);
 void ketnoi();
-static lv_obj_t* lbPH;
-static lv_obj_t* lbNd;
-static lv_obj_t* lbDA;
-static lv_obj_t* lbNdN;
-static lv_obj_t* lbDN;
-static lv_obj_t* lbMN;
-static lv_obj_t* name;
-static lv_obj_t* AS;
+
+TaskHandle_t Task1;
+TaskHandle_t Task2;
+
+static lv_obj_t *lbPH;
+static lv_obj_t *lbNd;
+static lv_obj_t *lbDA;
+static lv_obj_t *lbNdN;
+static lv_obj_t *lbDN;
+static lv_obj_t *lbMN;
+static lv_obj_t *name;
+static lv_obj_t *AS;
 
 static void testrandom();
 // ban phim
@@ -174,20 +179,28 @@ void wifi()
 void setup()
 {
   Serial.begin(9600);
-
   xTaskCreate(guiTask,
-              "gui",
-              4096 * 2,
-              NULL,
-              2,
-              NULL);
+                  "gui",
+                  4096*2,
+                  NULL,
+                  2,
+                  NULL);
+
+  vTaskDelay(500);
+  xTaskCreate(readdata,
+                "espnowTask",
+                4096,
+                NULL,
+                1,
+                NULL);
   EEPROM.begin(512);
-  readeeprom();
+  readeeprom();       /* pin task to core 0 */
 }
 
 void guiTask(void *pvParameters)
 {
-
+  Serial.print("Task1 running on core ");
+  Serial.println(xPortGetCoreID());
   ledcSetup(10, 5000 /*freq*/, 20 /*resolution - do phan giai*/);
   ledcAttachPin(32, 10);
   analogReadResolution(10);
@@ -242,12 +255,24 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-    testrandom();
+      testrandom();
     checkwifi();
     lv_task_handler();
   }
 }
+void readdata(void*pvParameters){
+    vTaskDelay(1000); 
+  Serial.print("Task2 running on core ");
+  Serial.println(xPortGetCoreID());
+ while (1)
+ {
+   Serial.println("404!");
+   Serial.println("");
 
+ }
+ 
+ 
+}
 void loop()
 {
 }
@@ -380,104 +405,98 @@ static void lv_main()
   lv_obj_align(label_time, NULL, LV_ALIGN_IN_BOTTOM_MID, -10, 0);
   lv_obj_set_style_local_bg_color(label_time, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
   lv_label_set_text(label_time, "00.00.00");
-// tab1
+  // tab1
 
+  // static lv_obj_t* lbPH;
+  // static lv_obj_t* lbNd;
+  // static lv_obj_t* lbDA;
+  // static lv_obj_t* lbNdN;
+  // static lv_obj_t* lbDN;
+  // static lv_obj_t* lbMN;
+  // static lv_obj_t* name;
+  // static lv_obj_t* AS;
 
-// static lv_obj_t* lbPH;
-// static lv_obj_t* lbNd;
-// static lv_obj_t* lbDA;
-// static lv_obj_t* lbNdN;
-// static lv_obj_t* lbDN;
-// static lv_obj_t* lbMN;
-// static lv_obj_t* name;
-// static lv_obj_t* AS;
+  lv_obj_t *labelPH = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelPH, "PH: ");
+  lv_obj_set_pos(labelPH, 10, 10);
+  lbPH = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbPH, 40, 10);
+  lv_obj_set_style_local_text_color(lbPH, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *labelphantram = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelphantram, " %");
+  lv_obj_set_style_local_text_color(labelphantram, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(labelphantram, 55, 10);
 
+  lv_obj_t *labelND = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelND, "Temperature: ");
+  lv_obj_set_pos(labelND, 80, 10);
+  lbNd = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbNd, 195, 10);
+  lv_obj_set_style_local_text_color(lbNd, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *labeldc = lv_label_create(tab1, NULL);
+  lv_label_set_text(labeldc, "°C");
+  lv_obj_set_style_local_text_color(labeldc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(labeldc, 215, 10);
 
-lv_obj_t *labelPH = lv_label_create(tab1, NULL);
-lv_label_set_text(labelPH,"PH: ");
-lv_obj_set_pos(labelPH, 10, 10);
-lbPH = lv_label_create(tab1, NULL);
-lv_obj_set_pos(lbPH, 40, 10);
-lv_obj_set_style_local_text_color(lbPH, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *labelphantram= lv_label_create(tab1,NULL);
-lv_label_set_text(labelphantram," %");
-lv_obj_set_style_local_text_color(labelphantram, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-lv_obj_set_pos(labelphantram,55, 10);
+  lv_obj_t *labelAS = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelAS, "AS: ");
+  lv_obj_set_pos(labelAS, 240, 10);
+  AS = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(AS, 270, 10);
+  lv_obj_set_style_local_text_color(AS, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *labellux = lv_label_create(tab1, NULL);
+  lv_label_set_text(labellux, "lux");
+  lv_obj_set_pos(labellux, 295, 10);
+  lv_obj_set_style_local_text_color(labellux, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
 
+  lv_obj_t *labelNDN = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelNDN, "Temperature2: ");
+  lv_obj_set_pos(labelNDN, 10, 50);
+  lbNdN = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbNdN, 135, 50);
+  lv_obj_set_style_local_text_color(lbNdN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *lbdc = lv_label_create(tab1, NULL);
+  lv_label_set_text(lbdc, "°C");
+  lv_obj_set_style_local_text_color(lbdc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(lbdc, 155, 50);
 
+  lv_obj_t *labelDA = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelDA, "Humidity: ");
+  lv_obj_set_pos(labelDA, 180, 50);
+  lbDA = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbDA, 260, 50);
+  lv_obj_set_style_local_text_color(lbDA, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *lbpt = lv_label_create(tab1, NULL);
+  lv_label_set_text(lbpt, "%");
+  lv_obj_set_style_local_text_color(lbpt, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(lbpt, 280, 50);
 
-lv_obj_t *labelND = lv_label_create(tab1, NULL);
-lv_label_set_text(labelND,"Temperature: ");
-lv_obj_set_pos(labelND, 80, 10);
-lbNd = lv_label_create(tab1, NULL);
-lv_obj_set_pos(lbNd, 195, 10);
-lv_obj_set_style_local_text_color(lbNd, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *labeldc = lv_label_create(tab1, NULL);
-lv_label_set_text(labeldc,"°C");
-lv_obj_set_style_local_text_color(labeldc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-lv_obj_set_pos(labeldc, 215, 10);
+  lv_obj_t *labelDN = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelDN, "DN:  ");
 
+  lv_obj_set_pos(labelDN, 10, 90);
+  lbDN = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbDN, 48, 90);
+  lv_obj_set_style_local_text_color(lbDN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *lbdc123 = lv_label_create(tab1, NULL);
+  lv_label_set_text(lbdc123, "°C");
+  lv_obj_set_style_local_text_color(lbdc123, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(lbdc123, 80, 90);
 
+  lv_obj_t *labelMN = lv_label_create(tab1, NULL);
+  lv_label_set_text(labelMN, "MN: ");
 
-lv_obj_t *labelAS = lv_label_create(tab1, NULL);
-lv_label_set_text(labelAS,"AS: ");
-lv_obj_set_pos(labelAS, 240, 10);
-AS = lv_label_create(tab1, NULL);
-lv_obj_set_pos(AS, 270, 10);
-lv_obj_set_style_local_text_color(AS, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *labellux = lv_label_create(tab1, NULL);
-lv_label_set_text(labellux,"lux");
-lv_obj_set_pos(labellux, 295, 10);
-lv_obj_set_style_local_text_color(labellux, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(labelMN, 120, 90);
+  lbMN = lv_label_create(tab1, NULL);
+  lv_obj_set_pos(lbMN, 155, 90);
+  lv_obj_set_style_local_text_color(lbMN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+  lv_obj_t *lbdc1234 = lv_label_create(tab1, NULL);
+  lv_label_set_text(lbdc1234, "%");
+  lv_obj_set_style_local_text_color(lbdc1234, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+  lv_obj_set_pos(lbdc1234, 190, 90);
 
-
-lv_obj_t *labelNDN = lv_label_create(tab1, NULL);
-lv_label_set_text(labelNDN,"Temperature2: ");
-lv_obj_set_pos(labelNDN, 10, 50);
-lbNdN = lv_label_create(tab1, NULL);
-lv_obj_set_pos(lbNdN, 135, 50);
-lv_obj_set_style_local_text_color(lbNdN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *lbdc = lv_label_create(tab1, NULL);
-lv_label_set_text(lbdc,"°C");
-lv_obj_set_style_local_text_color(lbdc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-lv_obj_set_pos(lbdc, 155, 50);
-
-
-lv_obj_t *labelDA = lv_label_create(tab1, NULL);
-lv_label_set_text(labelDA,"Humidity: ");
-lv_obj_set_pos(labelDA, 180, 50);
-lbDA = lv_label_create(tab1, NULL);
-lv_obj_set_pos(lbDA, 260, 50);
-lv_obj_set_style_local_text_color(lbDA, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *lbpt = lv_label_create(tab1, NULL);
-lv_label_set_text(lbpt,"%");
-lv_obj_set_style_local_text_color(lbpt, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-lv_obj_set_pos(lbpt, 280, 50);
-
-
-
-
-lv_obj_t *labelDN = lv_label_create(tab1, NULL);
-lv_label_set_text(labelDN,"DN:  ");
-
-lv_obj_set_pos(labelDN, 10, 80);
-lbDN = lv_label_create(tab1, NULL);
-lv_obj_set_pos(lbDN, 48, 80);
-lv_obj_set_style_local_text_color(lbDN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
-lv_obj_t *lbdc123 = lv_label_create(tab1, NULL);
-lv_label_set_text(lbdc123,"°C");
-lv_obj_set_style_local_text_color(lbdc123, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-lv_obj_set_pos(lbdc123,80, 80);
-
-// lv_obj_t *labelMN = lv_label_create(tab1, NULL);
-// lv_label_set_text(labelMN,"MN ");
-
-// lv_obj_t *labelNAME = lv_label_create(tab1, NULL);
-// lv_label_set_text(labelNAME,"NAME: ");
-
-
-
-
+  // lv_obj_t *labelNAME = lv_label_create(tab1, NULL);
+  // lv_label_set_text(labelNAME,"NAME: ");
 }
 
 static void timetest()
@@ -842,12 +861,14 @@ static void event_espnow(lv_obj_t *obj, lv_event_t event)
     printf("tests22222\n");
   }
 }
-static void testrandom(){
-String aaa=String( random(1,100));
-lv_label_set_text(lbPH,aaa.c_str());
-lv_label_set_text(lbNd,aaa.c_str());
-lv_label_set_text(AS,aaa.c_str());
-lv_label_set_text(lbNdN,aaa.c_str());
-lv_label_set_text(lbDA,aaa.c_str());
-delay(500);
+static void testrandom()
+{
+  String aaa = String(random(1, 100));
+  lv_label_set_text(lbPH, aaa.c_str());
+  lv_label_set_text(lbNd, aaa.c_str());
+  lv_label_set_text(AS, aaa.c_str());
+  lv_label_set_text(lbNdN, aaa.c_str());
+  lv_label_set_text(lbDA, aaa.c_str());
+  lv_label_set_text(lbMN, aaa.c_str());
+  lv_label_set_text(lbDN, aaa.c_str());
 }
