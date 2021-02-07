@@ -207,7 +207,7 @@ void guiTask(void *pvParameters)
   ledcWrite(10, 768);
 
   Serial.begin(9600); /* prepare for possible serial debug */
-  readeeprom();
+  //readeeprom();
 
   //  for (int i = 0; i < 96; ++i)
   //   {
@@ -255,7 +255,7 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-      testrandom();
+     testrandom();
     checkwifi();
     lv_task_handler();
   }
@@ -377,7 +377,7 @@ static void lv_main()
   if (WiFi.status() != WL_CONNECTED)
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
-    readeeprom();
+   // readeeprom();
   }
   else
   {
@@ -626,6 +626,7 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
   {
     printf("back\n");
     lv_main();
+    readeeprom();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
