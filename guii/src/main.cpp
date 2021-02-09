@@ -13,6 +13,9 @@
 #include <NTPClient.h>
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
+#include <corona.c>
+#include<HTTPClient.h>
+#include <ArduinoJson.h>
 String ssidName, password;
 
 const char *ssid;
@@ -131,9 +134,10 @@ static void timetest();
 static void checkwifi();
 void wifi();
 void guiTask(void *pvParameters);
-void readdata(void*pvParameters);
+void readdata(void *pvParameters);
 void ketnoi();
-
+static void event_backall(lv_obj_t *obj, lv_event_t event);
+static void covid19();
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
@@ -145,6 +149,13 @@ static lv_obj_t *lbDN;
 static lv_obj_t *lbMN;
 static lv_obj_t *name;
 static lv_obj_t *AS;
+// covid 19
+static lv_obj_t *timecv;
+static lv_obj_t *datecv;
+static lv_obj_t *countrycv;
+static lv_obj_t *cases;
+static lv_obj_t *deaths;
+static lv_obj_t *recovered;
 
 static void testrandom();
 // ban phim
@@ -180,21 +191,21 @@ void setup()
 {
   Serial.begin(9600);
   xTaskCreate(guiTask,
-                  "gui",
-                  4096*2,
-                  NULL,
-                  2,
-                  NULL);
+              "gui",
+              4096 * 2,
+              NULL,
+              2,
+              NULL);
 
   vTaskDelay(500);
   xTaskCreate(readdata,
-                "espnowTask",
-                4096,
-                NULL,
-                1,
-                NULL);
+              "espnowTask",
+              4096,
+              NULL,
+              1,
+              NULL);
   EEPROM.begin(512);
-  readeeprom();       /* pin task to core 0 */
+  readeeprom(); /* pin task to core 0 */
 }
 
 void guiTask(void *pvParameters)
@@ -255,23 +266,22 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-     testrandom();
+    testrandom();
     checkwifi();
     lv_task_handler();
   }
 }
-void readdata(void*pvParameters){
-    vTaskDelay(1000); 
+void readdata(void *pvParameters)
+{
+  vTaskDelay(1000);
   Serial.print("Task2 running on core ");
   Serial.println(xPortGetCoreID());
- while (1)
- {
-   Serial.println("404!");
-   Serial.println("");
-
- }
- 
- 
+  while (1)
+  {
+    // Serial.println("404!");
+  // covid19();
+    Serial.println("");
+  }
 }
 void loop()
 {
@@ -347,14 +357,14 @@ static void lv_main()
   // lv_obj_set_x(img21, 25);
   // lv_obj_set_y(img21, 130);
   // hostpost
-  lv_obj_t *imghost = lv_img_create(tab2, NULL);
-  lv_img_set_src(imghost, &host);
-  lv_obj_set_click(imghost, true);
-  lv_obj_set_event_cb(imghost, event_espnow);
-  lv_obj_align(imghost, NULL, LV_ALIGN_CENTER, 0, 15);
+  lv_obj_t *imgcorona = lv_img_create(tab2, NULL);
+  lv_img_set_src(imgcorona, &corona);
+  lv_obj_set_click(imgcorona, true);
+  lv_obj_set_event_cb(imgcorona, event_espnow);
+  lv_obj_align(imgcorona, NULL, LV_ALIGN_CENTER, 0, 15);
 
   lv_obj_t *img24 = lv_label_create(tab2, NULL);
-  lv_label_set_text(img24, "Esp Now");
+  lv_label_set_text(img24, "Covid19");
 
   lv_obj_align(img24, NULL, LV_ALIGN_CENTER, 0, 50);
 
@@ -377,7 +387,7 @@ static void lv_main()
   if (WiFi.status() != WL_CONNECTED)
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED); //set mau cho chu ki tu
-   // readeeprom();
+                                                                                                            // readeeprom();
   }
   else
   {
@@ -494,6 +504,14 @@ static void lv_main()
   lv_label_set_text(lbdc1234, "%");
   lv_obj_set_style_local_text_color(lbdc1234, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
   lv_obj_set_pos(lbdc1234, 190, 90);
+  //lv_obj_set_style_local_text_font(labelMN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_THEME_DEFAULT_FONT_SMALL);
+
+  static lv_style_t smallFont;
+
+  lv_style_init(&smallFont);
+  lv_style_set_text_font(&smallFont, LV_STATE_DEFAULT, &lv_font_montserrat_20);
+
+  lv_obj_add_style(lbMN, LV_OBJ_PART_MAIN, &smallFont);
 
   // lv_obj_t *labelNAME = lv_label_create(tab1, NULL);
   // lv_label_set_text(labelNAME,"NAME: ");
@@ -505,12 +523,14 @@ static void timetest()
   timeClient.begin();
   timeClient.update();
   String time = timeClient.getFormattedTime();
-  time12(time);
+  lv_label_set_text(label_time, time.c_str());
+  
 }
 // chuyen text bằng cách khai báo biến toàn cục rồi gọi lại ra không nên tạo nhãn nhiều lần mà chỉ tạo 1 lần duy nhất k thì nó bị đè.
 static void time12(String text)
 {
-  lv_label_set_text(label_time, text.c_str());
+
+  
 }
 
 static void checkwifi()
@@ -627,6 +647,19 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
     printf("back\n");
     lv_main();
     readeeprom();
+  }
+  else if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    printf("tests22222\n");
+  }
+}
+
+static void event_backall(lv_obj_t *obj, lv_event_t event)
+{
+  if (event == LV_EVENT_CLICKED)
+  {
+    printf("back all\n");
+    lv_main();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
@@ -847,9 +880,69 @@ static void iconespnow()
   lv_obj_t *imgback = lv_img_create(espnow, NULL);
   lv_img_set_src(imgback, &back50);
   lv_obj_set_click(imgback, true);
-  lv_obj_set_event_cb(imgback, event_handler1);
+  lv_obj_set_event_cb(imgback, event_backall);
   lv_obj_align(imgback, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+  // covid 19
+  timecv = lv_label_create(espnow, NULL);
+  lv_label_set_text(timecv, "00.00.00");
+  lv_obj_align(timecv, NULL, LV_ALIGN_IN_TOP_MID, 0, 50);
+  lv_obj_set_style_local_text_color(timecv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+  
+  datecv = lv_label_create(espnow, NULL);
+  lv_label_set_text(datecv, "09/02/2021");
+  lv_obj_align(datecv, NULL, LV_ALIGN_IN_TOP_MID, 0, 70);
+  lv_obj_set_style_local_text_color(datecv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+  lv_obj_t *imgcv = lv_img_create(espnow, NULL);
+  lv_img_set_src(imgcv, &corona);
+  lv_obj_align(imgcv, NULL, LV_ALIGN_CENTER, 0, 0);
+  // label
+  lv_obj_t *datnuoc = lv_label_create(espnow, NULL);
+  lv_obj_align(datnuoc, NULL, LV_ALIGN_IN_LEFT_MID, 10, 35);
+  lv_label_set_text(datnuoc, "Country: ");
+  lv_obj_set_style_local_text_color(datnuoc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+
+  lv_obj_t *truonghop = lv_label_create(espnow, NULL);
+  lv_obj_align(truonghop, NULL, LV_ALIGN_IN_RIGHT_MID, -120, 35);
+  lv_label_set_text(truonghop, "Cases: ");
+  lv_obj_set_style_local_text_color(truonghop, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+
+
+
+  lv_obj_t *mats = lv_label_create(espnow, NULL);
+  lv_obj_align(mats, NULL, LV_ALIGN_IN_LEFT_MID, 10, 70);
+  lv_label_set_text(mats, "Deaths: ");
+  lv_obj_set_style_local_text_color(mats, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+
+  
+  lv_obj_t *phuchoi = lv_label_create(espnow, NULL);
+  lv_obj_align(phuchoi, NULL, LV_ALIGN_IN_RIGHT_MID, -120, 70);
+  lv_label_set_text(phuchoi, "Recovered: ");
+  lv_obj_set_style_local_text_color(phuchoi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+
+  countrycv= lv_label_create(espnow,NULL);
+  lv_obj_align(countrycv, NULL, LV_ALIGN_IN_LEFT_MID, 85, 35);
+  lv_label_set_text(countrycv, "Vietnam");
+  lv_obj_set_style_local_text_color(countrycv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+
+  deaths= lv_label_create(espnow,NULL);
+  lv_obj_align(deaths, NULL, LV_ALIGN_IN_LEFT_MID, 80, 70);
+  lv_label_set_text(deaths, "35");
+  lv_obj_set_style_local_text_color(deaths, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+
+  cases = lv_label_create(espnow, NULL);
+  lv_obj_align(cases, NULL, LV_ALIGN_IN_RIGHT_MID, -60, 35);
+  lv_label_set_text(cases, "2069");
+  lv_obj_set_style_local_text_color(cases, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+  
+   recovered = lv_label_create(espnow, NULL);
+  lv_obj_align(recovered, NULL, LV_ALIGN_IN_RIGHT_MID, -25, 70);
+  lv_label_set_text(recovered, "1474 ");
+  lv_obj_set_style_local_text_color(recovered, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
+ 
+
+
 }
+
 static void event_espnow(lv_obj_t *obj, lv_event_t event)
 {
   if (event == LV_EVENT_CLICKED)
@@ -872,4 +965,36 @@ static void testrandom()
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
   lv_label_set_text(lbDN, aaa.c_str());
+  
 }
+
+// static void covid19(){
+//   if (WiFi.status() == WL_CONNECTED) 
+//   {
+//     HTTPClient http; 
+//     http.begin("http://coronavirus-19-api.herokuapp.com/countries/vietnam");
+//     int httpCode = http.GET();
+
+//     if (httpCode > 0) 
+//     {
+//       const size_t bufferSize = JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(8) + 370;
+//       DynamicJsonBuffer jsonBuffer(bufferSize);
+//       JsonObject& root = jsonBuffer.parseObject(http.getString());
+
+//       const char* country = root["country"]; 
+//       int cases = root["cases"]; 
+//       int deaths = root["deaths"]; 
+//       int recovered = root["recovered"];
+     
+      
+//       Serial.print("country: ");
+//       Serial.println(country);
+//       Serial.print("cases: ");
+//       Serial.println(cases);
+//       Serial.print("deaths: ");
+//       Serial.println(deaths);
+//       Serial.print("recovered: ");
+//       Serial.println(recovered);
+//     }
+//        http.end(); 
+// }}
