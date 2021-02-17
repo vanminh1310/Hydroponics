@@ -107,6 +107,7 @@ static void writeeeprom();
 static void iconespnow();
 lv_obj_t *espnow;
 //
+static void icondash();
 void scanwifi();
 static void btnscan();
 static lv_obj_t *bg_bottom;
@@ -114,6 +115,7 @@ static lv_obj_t *bg_bottom2;
 lv_obj_t *ddlist;
 lv_obj_t *namewifi;
 lv_obj_t *src2;
+lv_obj_t *src3;
 lv_obj_t *btscan;
 lv_obj_t *dataesp;
 static lv_obj_t *label_time;
@@ -125,6 +127,7 @@ static void event_handler_k(lv_obj_t *obj, lv_event_t event);
 static void event_btnscanwifi(lv_obj_t *obj, lv_event_t event);
 static void event_handler(lv_obj_t *obj, lv_event_t event);
 static void event_handler1(lv_obj_t *obj, lv_event_t event);
+static void event_handlerds(lv_obj_t *obj, lv_event_t event);
 void lv_ex_dropdown_1(void);
 static void iconwifi();
 static void time12(String text);
@@ -141,6 +144,7 @@ static void covid19();
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
+ lv_obj_t *datnuoc2;
 static lv_obj_t *lbPH;
 static lv_obj_t *lbNd;
 static lv_obj_t *lbDA;
@@ -164,7 +168,15 @@ static lv_obj_t *ta;
 
 void lv_ex_keyboard_1(void);
 static void kb_create(void);
-//
+//silde 
+static void slider_event_ph(lv_obj_t * slider, lv_event_t event);
+static lv_obj_t * slider_ph;
+static lv_obj_t * spinbox;
+static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e);
+static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
+void lv_ex_spinbox_1(void);
+
+// 
 
 void wifi()
 {
@@ -280,7 +292,7 @@ void readdata(void *pvParameters)
   {
     // Serial.println("404!");
   // covid19();
-    Serial.println("");
+    //Serial.println("");
   }
 }
 void loop()
@@ -341,6 +353,8 @@ static void lv_main()
   lv_obj_t *imgds = lv_img_create(tab2, NULL);
   lv_img_set_src(imgds, &dash);
   lv_obj_align(imgds, NULL, LV_ALIGN_IN_TOP_RIGHT, -20, 5);
+  lv_obj_set_click(imgds, true);
+  lv_obj_set_event_cb(imgds, event_handlerds);
 
   lv_obj_t *img22 = lv_label_create(tab2, NULL);
   lv_label_set_text(img22, "Dash");
@@ -521,11 +535,6 @@ static void timetest()
   
 }
 // chuyen text bằng cách khai báo biến toàn cục rồi gọi lại ra không nên tạo nhãn nhiều lần mà chỉ tạo 1 lần duy nhất k thì nó bị đè.
-static void time12(String text)
-{
-
-  
-}
 
 static void checkwifi()
 {
@@ -546,6 +555,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
   {
     printf("iconwifi\n");
     iconwifi();
+    
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
@@ -641,6 +651,22 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
     printf("back\n");
     lv_main();
     readeeprom();
+  }
+  else if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    printf("tests22222\n");
+  }
+}
+
+// dash 
+
+static void event_handlerds(lv_obj_t *obj, lv_event_t event)
+{
+  if (event == LV_EVENT_CLICKED)
+  {
+    printf("dash\n");
+    
+    icondash();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
@@ -960,6 +986,7 @@ static void testrandom()
   lv_label_set_text(lbMN, aaa.c_str());
   lv_label_set_text(lbDN, aaa.c_str());
   
+  
 
   
 }
@@ -994,3 +1021,85 @@ static void testrandom()
 //     }
 //        http.end(); 
 // }}
+// dashboad
+
+static void icondash()
+{
+   src3 = lv_obj_create(NULL, NULL); // tao va load man hinh moi
+  lv_scr_load(src3);
+  lv_obj_set_style_local_bg_color(src3, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+  // icon back
+  lv_obj_t *imgback = lv_img_create(src3, NULL);
+  lv_img_set_src(imgback, &back50);
+  lv_obj_set_click(imgback, true);
+  lv_obj_set_event_cb(imgback, event_backall);
+  lv_obj_align(imgback, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+
+  lv_obj_t * slider = lv_slider_create(src3, NULL);
+    lv_obj_set_width(slider, LV_DPI * 2);
+    lv_obj_align(slider, NULL, LV_ALIGN_IN_TOP_MID, 0, 60);
+    lv_obj_set_event_cb(slider, slider_event_ph);
+    lv_slider_set_range(slider, 0, 10);
+
+    slider_ph = lv_label_create(lv_scr_act(), NULL);
+    lv_label_set_text(slider_ph, "0");
+    lv_obj_set_auto_realign(slider_ph, true);
+    lv_obj_align(slider_ph, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
+
+lv_ex_spinbox_1();
+
+    
+
+}
+static void slider_event_ph(lv_obj_t * slider, lv_event_t event)
+{
+    if(event == LV_EVENT_VALUE_CHANGED) {
+        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+        lv_label_set_text(slider_ph, buf);
+    }
+}
+
+
+
+static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
+{
+    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
+        lv_spinbox_increment(spinbox);
+        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+        snprintf(buf, 4, "%u", lv_spinbox_get_value(spinbox));
+        Serial.println(buf);
+    }
+}
+
+static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e)
+{
+    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
+        lv_spinbox_decrement(spinbox);
+        
+    }
+}
+
+
+void lv_ex_spinbox_1(void)
+{
+    spinbox = lv_spinbox_create(src3, NULL);
+    lv_spinbox_set_range(spinbox, 0, 1000);
+    lv_spinbox_set_digit_format(spinbox, 4, 3);
+    lv_spinbox_step_prev(spinbox);
+    lv_obj_set_width(spinbox, 100);
+    lv_obj_align(spinbox, NULL, LV_ALIGN_CENTER, 0, 0);
+
+    lv_coord_t h = lv_obj_get_height(spinbox);
+    lv_obj_t * btn = lv_btn_create(lv_scr_act(), NULL);
+    lv_obj_set_size(btn, h, h);
+    lv_obj_align(btn, spinbox, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+    lv_theme_apply(btn, LV_THEME_SPINBOX_BTN);
+    lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_PLUS);
+    lv_obj_set_event_cb(btn, lv_spinbox_increment_event_cb);
+
+    btn = lv_btn_create(lv_scr_act(), btn);
+    lv_obj_align(btn, spinbox, LV_ALIGN_OUT_LEFT_MID, -5, 0);
+    lv_obj_set_event_cb(btn, lv_spinbox_decrement_event_cb);
+    lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_MINUS);
+}
