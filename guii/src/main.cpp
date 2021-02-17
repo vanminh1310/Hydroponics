@@ -506,12 +506,6 @@ static void lv_main()
   lv_obj_set_pos(lbdc1234, 190, 90);
   //lv_obj_set_style_local_text_font(labelMN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_THEME_DEFAULT_FONT_SMALL);
 
-  static lv_style_t smallFont;
-
-  lv_style_init(&smallFont);
-  lv_style_set_text_font(&smallFont, LV_STATE_DEFAULT, &lv_font_montserrat_20);
-
-  lv_obj_add_style(lbMN, LV_OBJ_PART_MAIN, &smallFont);
 
   // lv_obj_t *labelNAME = lv_label_create(tab1, NULL);
   // lv_label_set_text(labelNAME,"NAME: ");
@@ -889,7 +883,7 @@ static void iconespnow()
   lv_obj_set_style_local_text_color(timecv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
   
   datecv = lv_label_create(espnow, NULL);
-  lv_label_set_text(datecv, "09/02/2021");
+  lv_label_set_text(datecv, "10/02/2021");
   lv_obj_align(datecv, NULL, LV_ALIGN_IN_TOP_MID, 0, 70);
   lv_obj_set_style_local_text_color(datecv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
   lv_obj_t *imgcv = lv_img_create(espnow, NULL);
@@ -965,6 +959,8 @@ static void testrandom()
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
   lv_label_set_text(lbDN, aaa.c_str());
+  
+
   
 }
 
