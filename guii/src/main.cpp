@@ -14,12 +14,19 @@
 #include <WiFi.h> // for WiFi shield
 #include <WiFiUdp.h>
 #include <corona.c>
-#include<HTTPClient.h>
+#include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+char auth[] = "bfZd5TubQBz_veStIa1u8Uc07f5h7yA1";
 String ssidName, password;
 
 const char *ssid;
 const char *password1;
+
+char ssida[] = "TATUYEN";       // tên wifi cần truy cập
+char pass[] = "1234567890"; 
 
 unsigned long timeout = 10000; // 10sec
 
@@ -144,7 +151,7 @@ static void covid19();
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
- lv_obj_t *datnuoc2;
+lv_obj_t *datnuoc2;
 static lv_obj_t *lbPH;
 static lv_obj_t *lbNd;
 static lv_obj_t *lbDA;
@@ -168,15 +175,15 @@ static lv_obj_t *ta;
 
 void lv_ex_keyboard_1(void);
 static void kb_create(void);
-//silde 
-static void slider_event_ph(lv_obj_t * slider, lv_event_t event);
-static lv_obj_t * slider_ph;
-static lv_obj_t * spinbox;
-static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e);
-static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
-void lv_ex_spinbox_1(void);
+//silde
+static void slider_event_ph(lv_obj_t *slider, lv_event_t event);
+static lv_obj_t *slider_ph;
+static void slider_event_nd(lv_obj_t *slider, lv_event_t event);
+static lv_obj_t *slider_nd;
+static void slider_event_as(lv_obj_t *slider, lv_event_t event);
+static lv_obj_t *slider_as;
 
-// 
+//
 
 void wifi()
 {
@@ -218,6 +225,7 @@ void setup()
               NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
+  
 }
 
 void guiTask(void *pvParameters)
@@ -238,7 +246,7 @@ void guiTask(void *pvParameters)
   //   }
 
   lv_init();
-
+  
 #if USE_LV_LOG != 0
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif
@@ -278,21 +286,53 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-    testrandom();
+   
     checkwifi();
     lv_task_handler();
+
   }
 }
+
+
+BLYNK_WRITE(V0){  // This function gets called each time something changes on the widget
+  String value = String(param.asInt());
+  Serial.println(value);  // This gets the 'value' of the Widget as an integer
+ lv_label_set_text(slider_nd, value.c_str());
+}
+
+BLYNK_WRITE(V1){  // This function gets called each time something changes on the widget
+  String value1 = String(param.asInt());
+  Serial.println(value1);  // This gets the 'value' of the Widget as an integer
+ lv_label_set_text(slider_ph, value1.c_str());
+}
+
+BLYNK_WRITE(V2){  // This function gets called each time something changes on the widget
+  String value2 = String(param.asInt());
+  Serial.println(value2);  // This gets the 'value' of the Widget as an integer
+ lv_label_set_text(slider_as, value2.c_str());
+}
+
+
+
+
+
+
 void readdata(void *pvParameters)
 {
   vTaskDelay(1000);
   Serial.print("Task2 running on core ");
+ Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
+  //Blynk.config(auth, "iot.htpro.vn", 8080);
   Serial.println(xPortGetCoreID());
   while (1)
   {
     // Serial.println("404!");
-  // covid19();
+    // covid19();
     //Serial.println("");
+
+
+     testrandom();
+     Blynk.run();
   }
 }
 void loop()
@@ -520,7 +560,6 @@ static void lv_main()
   lv_obj_set_pos(lbdc1234, 190, 90);
   //lv_obj_set_style_local_text_font(labelMN, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_THEME_DEFAULT_FONT_SMALL);
 
-
   // lv_obj_t *labelNAME = lv_label_create(tab1, NULL);
   // lv_label_set_text(labelNAME,"NAME: ");
 }
@@ -532,7 +571,6 @@ static void timetest()
   timeClient.update();
   String time = timeClient.getFormattedTime();
   lv_label_set_text(label_time, time.c_str());
-  
 }
 // chuyen text bằng cách khai báo biến toàn cục rồi gọi lại ra không nên tạo nhãn nhiều lần mà chỉ tạo 1 lần duy nhất k thì nó bị đè.
 
@@ -545,6 +583,7 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
+    
     timetest();
   }
 }
@@ -555,7 +594,6 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
   {
     printf("iconwifi\n");
     iconwifi();
-    
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
   {
@@ -658,14 +696,14 @@ static void event_handler1(lv_obj_t *obj, lv_event_t event)
   }
 }
 
-// dash 
+// dash
 
 static void event_handlerds(lv_obj_t *obj, lv_event_t event)
 {
   if (event == LV_EVENT_CLICKED)
   {
     printf("dash\n");
-    
+
     icondash();
   }
   else if (event == LV_EVENT_VALUE_CHANGED)
@@ -866,6 +904,7 @@ boolean readeeprom()
     Serial.print("Password: ");
     Serial.println(pass.c_str());
     WiFi.begin(ssid.c_str(), pass.c_str());
+    
     //ket noi voi mang WIFI duoc luu trong EEPROM
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -883,10 +922,12 @@ boolean readeeprom()
     {
       Serial.println("mat khau khong dung xin vui long thu lai");
       lv_label_set_text(namewifi, "#FF0000 No Connected #");
+      //Blynk.begin(auth, ssid.c_str(), pass.c_str(),"iot.htpro.vn", 8080); 
     }
     else
     {
       lv_label_set_text(namewifi, "#32CD32 Connected #");
+      
     }
   }
 }
@@ -907,7 +948,7 @@ static void iconespnow()
   lv_label_set_text(timecv, "00.00.00");
   lv_obj_align(timecv, NULL, LV_ALIGN_IN_TOP_MID, 0, 50);
   lv_obj_set_style_local_text_color(timecv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
-  
+
   datecv = lv_label_create(espnow, NULL);
   lv_label_set_text(datecv, "10/02/2021");
   lv_obj_align(datecv, NULL, LV_ALIGN_IN_TOP_MID, 0, 70);
@@ -926,25 +967,22 @@ static void iconespnow()
   lv_label_set_text(truonghop, "Cases: ");
   lv_obj_set_style_local_text_color(truonghop, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-
-
   lv_obj_t *mats = lv_label_create(espnow, NULL);
   lv_obj_align(mats, NULL, LV_ALIGN_IN_LEFT_MID, 10, 70);
   lv_label_set_text(mats, "Deaths: ");
   lv_obj_set_style_local_text_color(mats, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  
   lv_obj_t *phuchoi = lv_label_create(espnow, NULL);
   lv_obj_align(phuchoi, NULL, LV_ALIGN_IN_RIGHT_MID, -120, 70);
   lv_label_set_text(phuchoi, "Recovered: ");
   lv_obj_set_style_local_text_color(phuchoi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  countrycv= lv_label_create(espnow,NULL);
+  countrycv = lv_label_create(espnow, NULL);
   lv_obj_align(countrycv, NULL, LV_ALIGN_IN_LEFT_MID, 85, 35);
   lv_label_set_text(countrycv, "Vietnam");
   lv_obj_set_style_local_text_color(countrycv, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
 
-  deaths= lv_label_create(espnow,NULL);
+  deaths = lv_label_create(espnow, NULL);
   lv_obj_align(deaths, NULL, LV_ALIGN_IN_LEFT_MID, 80, 70);
   lv_label_set_text(deaths, "35");
   lv_obj_set_style_local_text_color(deaths, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
@@ -953,14 +991,11 @@ static void iconespnow()
   lv_obj_align(cases, NULL, LV_ALIGN_IN_RIGHT_MID, -60, 35);
   lv_label_set_text(cases, "2069");
   lv_obj_set_style_local_text_color(cases, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
-  
-   recovered = lv_label_create(espnow, NULL);
+
+  recovered = lv_label_create(espnow, NULL);
   lv_obj_align(recovered, NULL, LV_ALIGN_IN_RIGHT_MID, -25, 70);
   lv_label_set_text(recovered, "1474 ");
   lv_obj_set_style_local_text_color(recovered, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
- 
-
-
 }
 
 static void event_espnow(lv_obj_t *obj, lv_event_t event)
@@ -985,31 +1020,28 @@ static void testrandom()
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
   lv_label_set_text(lbDN, aaa.c_str());
-  
-  
-
-  
+   Blynk.virtualWrite(V5, aaa.c_str()); 
+     Blynk.virtualWrite(V6, aaa.c_str()); 
 }
 
 // static void covid19(){
-//   if (WiFi.status() == WL_CONNECTED) 
+//   if (WiFi.status() == WL_CONNECTED)
 //   {
-//     HTTPClient http; 
+//     HTTPClient http;
 //     http.begin("http://coronavirus-19-api.herokuapp.com/countries/vietnam");
 //     int httpCode = http.GET();
 
-//     if (httpCode > 0) 
+//     if (httpCode > 0)
 //     {
 //       const size_t bufferSize = JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(8) + 370;
 //       DynamicJsonBuffer jsonBuffer(bufferSize);
 //       JsonObject& root = jsonBuffer.parseObject(http.getString());
 
-//       const char* country = root["country"]; 
-//       int cases = root["cases"]; 
-//       int deaths = root["deaths"]; 
+//       const char* country = root["country"];
+//       int cases = root["cases"];
+//       int deaths = root["deaths"];
 //       int recovered = root["recovered"];
-     
-      
+
 //       Serial.print("country: ");
 //       Serial.println(country);
 //       Serial.print("cases: ");
@@ -1019,13 +1051,13 @@ static void testrandom()
 //       Serial.print("recovered: ");
 //       Serial.println(recovered);
 //     }
-//        http.end(); 
+//        http.end();
 // }}
 // dashboad
 
 static void icondash()
 {
-   src3 = lv_obj_create(NULL, NULL); // tao va load man hinh moi
+  src3 = lv_obj_create(NULL, NULL); // tao va load man hinh moi
   lv_scr_load(src3);
   lv_obj_set_style_local_bg_color(src3, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
   // icon back
@@ -1034,72 +1066,89 @@ static void icondash()
   lv_obj_set_click(imgback, true);
   lv_obj_set_event_cb(imgback, event_backall);
   lv_obj_align(imgback, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+  // ph
+  lv_obj_t *phname = lv_label_create(src3, NULL);
+  lv_obj_align(phname, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 50);
+  lv_label_set_text(phname, "PH: ");
+  lv_obj_set_style_local_text_color(phname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  lv_obj_t * slider = lv_slider_create(src3, NULL);
-    lv_obj_set_width(slider, LV_DPI * 2);
-    lv_obj_align(slider, NULL, LV_ALIGN_IN_TOP_MID, 0, 60);
-    lv_obj_set_event_cb(slider, slider_event_ph);
-    lv_slider_set_range(slider, 0, 10);
+  lv_obj_t *slider = lv_slider_create(src3, NULL);
+  lv_obj_set_width(slider, LV_DPI * 2);
+  lv_obj_align(slider, NULL, LV_ALIGN_IN_TOP_MID, 0, 80);
+  lv_obj_set_event_cb(slider, slider_event_ph);
+  lv_slider_set_range(slider, 0, 10);
 
-    slider_ph = lv_label_create(lv_scr_act(), NULL);
-    lv_label_set_text(slider_ph, "0");
-    lv_obj_set_auto_realign(slider_ph, true);
-    lv_obj_align(slider_ph, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
+  slider_ph = lv_label_create(lv_scr_act(), NULL);
+  lv_label_set_text(slider_ph, "0");
+  lv_obj_set_auto_realign(slider_ph, true);
+  lv_obj_align(slider_ph, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
+  // nd
+  lv_obj_t *ndname = lv_label_create(src3, NULL);
+  lv_obj_align(ndname, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 100);
+  lv_label_set_text(ndname, "NHIET DO: ");
+  lv_obj_set_style_local_text_color(ndname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-lv_ex_spinbox_1();
+  lv_obj_t *slider1 = lv_slider_create(src3, NULL);
+  lv_obj_set_width(slider1, LV_DPI * 2);
+  lv_obj_align(slider1, NULL, LV_ALIGN_IN_TOP_MID, 0, 130);
+  lv_obj_set_event_cb(slider1, slider_event_nd);
+  lv_slider_set_range(slider1, 0, 100);
 
-    
+  slider_nd = lv_label_create(lv_scr_act(), NULL);
+  lv_label_set_text(slider_nd, "0");
+  lv_obj_set_auto_realign(slider_nd, true);
+  lv_obj_align(slider_nd, slider, LV_ALIGN_CENTER, 0, 70);
+  // as
+  lv_obj_t *asname = lv_label_create(src3, NULL);
+  lv_obj_align(asname, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 160);
+  lv_label_set_text(asname, "ANH SANG : ");
+  lv_obj_set_style_local_text_color(asname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
+
+  lv_obj_t *slider12 = lv_slider_create(src3, NULL);
+  lv_obj_set_width(slider12, LV_DPI * 2);
+  lv_obj_align(slider12, NULL, LV_ALIGN_IN_TOP_MID, 0, 190);
+  lv_obj_set_event_cb(slider12, slider_event_as);
+  lv_slider_set_range(slider12, 0, 1000);
+
+  slider_as = lv_label_create(lv_scr_act(), NULL);
+  lv_label_set_text(slider_as, "0");
+  lv_obj_set_auto_realign(slider_as, true);
+  lv_obj_align(slider_as, slider, LV_ALIGN_CENTER, 0, 130);
+
 
 }
-static void slider_event_ph(lv_obj_t * slider, lv_event_t event)
+static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
 {
-    if(event == LV_EVENT_VALUE_CHANGED) {
-        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_slider_get_value(slider));
-        lv_label_set_text(slider_ph, buf);
-    }
+  if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+
+    lv_label_set_text(slider_ph, buf);
+       Blynk.virtualWrite(V1, buf); 
+
+  }
 }
 
-
-
-static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
+static void slider_event_nd(lv_obj_t *slider, lv_event_t event)
 {
-    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_increment(spinbox);
-        static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-        snprintf(buf, 4, "%u", lv_spinbox_get_value(spinbox));
-        Serial.println(buf);
-    }
+  if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+
+    lv_label_set_text(slider_nd, buf);
+       Blynk.virtualWrite(V0, buf); 
+  }
 }
-
-static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e)
+static void slider_event_as(lv_obj_t *slider, lv_event_t event)
 {
-    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_decrement(spinbox);
-        
-    }
-}
+  if (event == LV_EVENT_VALUE_CHANGED)
+  {
+    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
-
-void lv_ex_spinbox_1(void)
-{
-    spinbox = lv_spinbox_create(src3, NULL);
-    lv_spinbox_set_range(spinbox, 0, 1000);
-    lv_spinbox_set_digit_format(spinbox, 4, 3);
-    lv_spinbox_step_prev(spinbox);
-    lv_obj_set_width(spinbox, 100);
-    lv_obj_align(spinbox, NULL, LV_ALIGN_CENTER, 0, 0);
-
-    lv_coord_t h = lv_obj_get_height(spinbox);
-    lv_obj_t * btn = lv_btn_create(lv_scr_act(), NULL);
-    lv_obj_set_size(btn, h, h);
-    lv_obj_align(btn, spinbox, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-    lv_theme_apply(btn, LV_THEME_SPINBOX_BTN);
-    lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_PLUS);
-    lv_obj_set_event_cb(btn, lv_spinbox_increment_event_cb);
-
-    btn = lv_btn_create(lv_scr_act(), btn);
-    lv_obj_align(btn, spinbox, LV_ALIGN_OUT_LEFT_MID, -5, 0);
-    lv_obj_set_event_cb(btn, lv_spinbox_decrement_event_cb);
-    lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_MINUS);
+    lv_label_set_text(slider_as, buf);
+       Blynk.virtualWrite(V2, buf); 
+  }
 }
