@@ -183,6 +183,9 @@ static lv_obj_t *slider_nd;
 static void slider_event_as(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *slider_as;
 
+//Blynk 
+static void checkblynk(); 
+
 //
 
 void wifi()
@@ -316,12 +319,16 @@ BLYNK_WRITE(V2){  // This function gets called each time something changes on th
 
 
 
-
 void readdata(void *pvParameters)
 {
-  vTaskDelay(1000);
+  vTaskDelay(50);
   Serial.print("Task2 running on core ");
  Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
+ checkblynk();
+ //  dong bo gia tri 
+
+ 
+
   //Blynk.config(auth, "iot.htpro.vn", 8080);
   Serial.println(xPortGetCoreID());
   while (1)
@@ -333,6 +340,9 @@ void readdata(void *pvParameters)
 
      testrandom();
      Blynk.run();
+    
+     
+    
   }
 }
 void loop()
@@ -585,6 +595,7 @@ static void checkwifi()
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
     
     timetest();
+     
   }
 }
 
@@ -1078,7 +1089,7 @@ static void icondash()
   lv_obj_set_event_cb(slider, slider_event_ph);
   lv_slider_set_range(slider, 0, 10);
 
-  slider_ph = lv_label_create(lv_scr_act(), NULL);
+  slider_ph = lv_label_create(src3, NULL);
   lv_label_set_text(slider_ph, "0");
   lv_obj_set_auto_realign(slider_ph, true);
   lv_obj_align(slider_ph, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
@@ -1094,7 +1105,7 @@ static void icondash()
   lv_obj_set_event_cb(slider1, slider_event_nd);
   lv_slider_set_range(slider1, 0, 100);
 
-  slider_nd = lv_label_create(lv_scr_act(), NULL);
+  slider_nd = lv_label_create(src3, NULL);
   lv_label_set_text(slider_nd, "0");
   lv_obj_set_auto_realign(slider_nd, true);
   lv_obj_align(slider_nd, slider, LV_ALIGN_CENTER, 0, 70);
@@ -1110,7 +1121,7 @@ static void icondash()
   lv_obj_set_event_cb(slider12, slider_event_as);
   lv_slider_set_range(slider12, 0, 1000);
 
-  slider_as = lv_label_create(lv_scr_act(), NULL);
+  slider_as = lv_label_create(src3, NULL);
   lv_label_set_text(slider_as, "0");
   lv_obj_set_auto_realign(slider_as, true);
   lv_obj_align(slider_as, slider, LV_ALIGN_CENTER, 0, 130);
@@ -1125,7 +1136,7 @@ static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_ph, buf);
-       Blynk.virtualWrite(V1, buf); 
+    Blynk.virtualWrite(V1, buf); 
 
   }
 }
@@ -1138,7 +1149,7 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_nd, buf);
-       Blynk.virtualWrite(V0, buf); 
+    Blynk.virtualWrite(V0, buf); 
   }
 }
 static void slider_event_as(lv_obj_t *slider, lv_event_t event)
@@ -1149,6 +1160,18 @@ static void slider_event_as(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_as, buf);
-       Blynk.virtualWrite(V2, buf); 
+    Blynk.virtualWrite(V2, buf); 
+  }
+}
+static void checkblynk(){
+    if (!Blynk.connected()) {
+    Serial.println("Lost connection");
+    if(Blynk.connect()) {
+      Serial.println("Reconnected");
+      Blynk.syncAll();
+    }
+    else {
+      Serial.println("Not reconnected");
+    }
   }
 }
