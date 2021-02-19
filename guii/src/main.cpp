@@ -300,6 +300,7 @@ BLYNK_WRITE(V0){  // This function gets called each time something changes on th
   String value = String(param.asInt());
   Serial.println(value);  // This gets the 'value' of the Widget as an integer
  lv_label_set_text(slider_nd, value.c_str());
+
 }
 
 BLYNK_WRITE(V1){  // This function gets called each time something changes on the widget
@@ -1092,6 +1093,7 @@ static void icondash()
   slider_ph = lv_label_create(src3, NULL);
   lv_label_set_text(slider_ph, "0");
   lv_obj_set_auto_realign(slider_ph, true);
+  lv_obj_set_adv_hittest(slider_ph, true);
   lv_obj_align(slider_ph, slider, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
   // nd
   lv_obj_t *ndname = lv_label_create(src3, NULL);
