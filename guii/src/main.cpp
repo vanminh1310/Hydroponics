@@ -219,12 +219,12 @@ void setup()
               2,
               NULL);
 
-  vTaskDelay(500);
+  vTaskDelay(1000);
   xTaskCreate(readdata,
               "espnowTask",
-              4096,
+              4096*2,
               NULL,
-              1,
+              0,
               NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
@@ -295,8 +295,7 @@ void guiTask(void *pvParameters)
 
   }
 }
-
-
+ 
 BLYNK_WRITE(V0){  // This function gets called each time something changes on the widget
   String value = String(param.asInt());
   Serial.println(value);  // This gets the 'value' of the Widget as an integer
@@ -321,15 +320,15 @@ BLYNK_WRITE(V2){  // This function gets called each time something changes on th
 
 void readdata(void *pvParameters)
 {
-  vTaskDelay(50);
+  vTaskDelay(1000);
   Serial.print("Task2 running on core ");
- Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
- checkblynk();
+// Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
+//  checkblynk();
  //  dong bo gia tri 
 
  
 
-  //Blynk.config(auth, "iot.htpro.vn", 8080);
+  Blynk.config(auth, "iot.htpro.vn", 8080);
   Serial.println(xPortGetCoreID());
   while (1)
   {
@@ -340,6 +339,7 @@ void readdata(void *pvParameters)
 
      testrandom();
      Blynk.run();
+  
     
      
     
@@ -1125,7 +1125,9 @@ static void icondash()
   lv_label_set_text(slider_as, "0");
   lv_obj_set_auto_realign(slider_as, true);
   lv_obj_align(slider_as, slider, LV_ALIGN_CENTER, 0, 130);
-
+    Blynk.syncVirtual(V1);
+    Blynk.syncVirtual(V0);
+    Blynk.syncVirtual(V2);
 
 }
 static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
@@ -1136,6 +1138,7 @@ static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_ph, buf);
+ 
     Blynk.virtualWrite(V1, buf); 
 
   }
@@ -1149,6 +1152,7 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_nd, buf);
+
     Blynk.virtualWrite(V0, buf); 
   }
 }
@@ -1158,9 +1162,10 @@ static void slider_event_as(lv_obj_t *slider, lv_event_t event)
   {
     static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
-
     lv_label_set_text(slider_as, buf);
+
     Blynk.virtualWrite(V2, buf); 
+
   }
 }
 static void checkblynk(){
