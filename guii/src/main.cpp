@@ -182,7 +182,9 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *slider_nd;
 static void slider_event_as(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *slider_as;
-
+ lv_obj_t *slider;
+ lv_obj_t *slider1;
+ lv_obj_t *slider12;
 //Blynk 
 static void checkblynk(); 
 
@@ -219,13 +221,13 @@ void setup()
               2,
               NULL);
 
-  vTaskDelay(1000);
-  xTaskCreate(readdata,
-              "espnowTask",
-              4096*2,
-              NULL,
-              0,
-              NULL);
+  // vTaskDelay(1000);
+  // xTaskCreate(readdata,
+  //             "espnowTask",
+  //             4096*2,
+  //             NULL,
+  //             0,
+  //             NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
   
@@ -239,7 +241,7 @@ void guiTask(void *pvParameters)
   ledcAttachPin(32, 10);
   analogReadResolution(10);
   ledcWrite(10, 768);
-
+ Blynk.config(auth, "iot.htpro.vn", 8080);
   Serial.begin(9600); /* prepare for possible serial debug */
   //readeeprom();
 
@@ -289,10 +291,10 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-   
+        testrandom();
     checkwifi();
     lv_task_handler();
-
+  Blynk.run();
   }
 }
  
@@ -301,51 +303,49 @@ BLYNK_WRITE(V0){  // This function gets called each time something changes on th
   Serial.println(value);  // This gets the 'value' of the Widget as an integer
  lv_label_set_text(slider_nd, value.c_str());
 
+ 	lv_slider_set_value(slider1, value.toInt(), LV_ANIM_ON);
 }
 
 BLYNK_WRITE(V1){  // This function gets called each time something changes on the widget
   String value1 = String(param.asInt());
   Serial.println(value1);  // This gets the 'value' of the Widget as an integer
  lv_label_set_text(slider_ph, value1.c_str());
-}
 
+ 	lv_slider_set_value(slider, value1.toInt(), LV_ANIM_ON);
+}
+// ham toInt chuyen doi ve dang nguyen 
 BLYNK_WRITE(V2){  // This function gets called each time something changes on the widget
   String value2 = String(param.asInt());
   Serial.println(value2);  // This gets the 'value' of the Widget as an integer
  lv_label_set_text(slider_as, value2.c_str());
+  // int vale = param.asInt();
+   	lv_slider_set_value(slider12, value2.toInt(), LV_ANIM_ON);
 }
 
 
 
 
 
-void readdata(void *pvParameters)
-{
-  vTaskDelay(1000);
-  Serial.print("Task2 running on core ");
-// Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
-//  checkblynk();
- //  dong bo gia tri 
+// void readdata(void *pvParameters)
+// {
+//   vTaskDelay(1000);
+//   Serial.print("Task2 running on core ");
+// // Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
+// //  checkblynk();
+//  //  dong bo gia tri 
 
  
 
-  Blynk.config(auth, "iot.htpro.vn", 8080);
-  Serial.println(xPortGetCoreID());
-  while (1)
-  {
-    // Serial.println("404!");
-    // covid19();
-    //Serial.println("");
-
-
-     testrandom();
-     Blynk.run();
-  
+ 
+//   Serial.println(xPortGetCoreID());
+//   while (1)
+//   {
+//     // Serial.println("404!");
+//     // covid19();
+//     //Serial.println("");
     
-     
-    
-  }
-}
+//   }
+//}
 void loop()
 {
 }
@@ -950,11 +950,11 @@ static void iconespnow()
   lv_scr_load(espnow);
   lv_obj_set_style_local_bg_color(espnow, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
   // icon back
-  lv_obj_t *imgback = lv_img_create(espnow, NULL);
-  lv_img_set_src(imgback, &back50);
-  lv_obj_set_click(imgback, true);
-  lv_obj_set_event_cb(imgback, event_backall);
-  lv_obj_align(imgback, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+  lv_obj_t *imgback111 = lv_img_create(espnow, NULL);
+  lv_img_set_src(imgback111, &back50);
+  lv_obj_set_click(imgback111, true);
+  lv_obj_set_event_cb(imgback111, event_backall);
+  lv_obj_align(imgback111, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
   // covid 19
   timecv = lv_label_create(espnow, NULL);
   lv_label_set_text(timecv, "00.00.00");
@@ -1084,7 +1084,7 @@ static void icondash()
   lv_label_set_text(phname, "PH: ");
   lv_obj_set_style_local_text_color(phname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  lv_obj_t *slider = lv_slider_create(src3, NULL);
+  slider = lv_slider_create(src3, NULL);
   lv_obj_set_width(slider, LV_DPI * 2);
   lv_obj_align(slider, NULL, LV_ALIGN_IN_TOP_MID, 0, 80);
   lv_obj_set_event_cb(slider, slider_event_ph);
@@ -1101,7 +1101,7 @@ static void icondash()
   lv_label_set_text(ndname, "NHIET DO: ");
   lv_obj_set_style_local_text_color(ndname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  lv_obj_t *slider1 = lv_slider_create(src3, NULL);
+  slider1 = lv_slider_create(src3, NULL);
   lv_obj_set_width(slider1, LV_DPI * 2);
   lv_obj_align(slider1, NULL, LV_ALIGN_IN_TOP_MID, 0, 130);
   lv_obj_set_event_cb(slider1, slider_event_nd);
@@ -1117,7 +1117,7 @@ static void icondash()
   lv_label_set_text(asname, "ANH SANG : ");
   lv_obj_set_style_local_text_color(asname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-  lv_obj_t *slider12 = lv_slider_create(src3, NULL);
+slider12 = lv_slider_create(src3, NULL);
   lv_obj_set_width(slider12, LV_DPI * 2);
   lv_obj_align(slider12, NULL, LV_ALIGN_IN_TOP_MID, 0, 190);
   lv_obj_set_event_cb(slider12, slider_event_as);
@@ -1127,6 +1127,9 @@ static void icondash()
   lv_label_set_text(slider_as, "0");
   lv_obj_set_auto_realign(slider_as, true);
   lv_obj_align(slider_as, slider, LV_ALIGN_CENTER, 0, 130);
+   // lv_slider_set_type(slider12, LV_SLIDER_TYPE_RANGE);
+
+
     Blynk.syncVirtual(V1);
     Blynk.syncVirtual(V0);
     Blynk.syncVirtual(V2);
