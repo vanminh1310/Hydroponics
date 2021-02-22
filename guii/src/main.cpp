@@ -20,6 +20,9 @@
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 char auth[] = "bfZd5TubQBz_veStIa1u8Uc07f5h7yA1";
+#include <SoftwareSerial.h>
+#define RX2 34
+#define TX2 35
 String ssidName, password;
 
 const char *ssid;
@@ -29,6 +32,8 @@ char ssida[] = "TATUYEN";       // tên wifi cần truy cập
 char pass[] = "1234567890"; 
 
 unsigned long timeout = 10000; // 10sec
+ long last = 0;
+
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 7 * 3600); // dich mu gio sang mui gio Viet Nam
@@ -187,7 +192,8 @@ static lv_obj_t *slider_as;
  lv_obj_t *slider12;
 //Blynk 
 static void checkblynk(); 
-
+// uart 
+void uart();
 //
 
 void wifi()
@@ -214,6 +220,7 @@ void wifi()
 void setup()
 {
   Serial.begin(9600);
+  Serial2.begin(9600,SERIAL_8N1,RX2,TX2);
   xTaskCreate(guiTask,
               "gui",
               4096 * 2,
@@ -230,7 +237,7 @@ void setup()
   //             NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
-  
+  last = millis();
 }
 
 void guiTask(void *pvParameters)
@@ -242,7 +249,8 @@ void guiTask(void *pvParameters)
   analogReadResolution(10);
   ledcWrite(10, 768);
  Blynk.config(auth, "iot.htpro.vn", 8080);
-  Serial.begin(9600); /* prepare for possible serial debug */
+  // Serial.begin(9600); /* prepare for possible serial debug */
+
   //readeeprom();
 
   //  for (int i = 0; i < 96; ++i)
@@ -295,6 +303,10 @@ void guiTask(void *pvParameters)
     checkwifi();
     lv_task_handler();
   Blynk.run();
+  if(millis()-last>=10000){
+  uart();
+   last = millis();
+  }
   }
 }
  
@@ -1031,7 +1043,7 @@ static void testrandom()
   lv_label_set_text(lbNdN, aaa.c_str());
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
-  lv_label_set_text(lbDN, aaa.c_str());
+ // lv_label_set_text(lbDN, aaa.c_str());
    Blynk.virtualWrite(V5, aaa.c_str()); 
      Blynk.virtualWrite(V6, aaa.c_str()); 
 }
@@ -1184,4 +1196,26 @@ static void checkblynk(){
       Serial.println("Not reconnected");
     }
   }
+}
+void uart(){
+  String  test = Serial2.readString();
+  // put your main code here, to run repeatedly:
+ Serial.print("data:");
+ Serial.println(test);
+ if(test.indexOf("s")>=0){
+  Serial.println("bat thiet bi 1");
+  }
+  int timN,timD = -1;
+ timN=test.indexOf("N");
+  timD=test.indexOf("D");
+  if (timN >=0&&timD>=0)
+  {
+    String dulieu ="";
+    dulieu = test.substring(timN+1,timD);
+    Serial.print("dulieu");
+      Serial.print(dulieu);
+    lv_label_set_text(lbDN, dulieu.c_str());
+  }
+  
+
 }

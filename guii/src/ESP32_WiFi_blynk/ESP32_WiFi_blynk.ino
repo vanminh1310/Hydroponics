@@ -42,8 +42,8 @@ char auth[] = "bfZd5TubQBz_veStIa1u8Uc07f5h7yA1";
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "MF150_1B8B";
-char pass[] = "26316529";
+char ssid[] = "TATUYEN";
+char pass[] = "1234567890";
 #define DHTPIN 5
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
