@@ -21,10 +21,10 @@
 #include <BlynkSimpleEsp32.h>
 char auth[] = "bfZd5TubQBz_veStIa1u8Uc07f5h7yA1";
 #include <SoftwareSerial.h>
-#define RX2 34
-#define TX2 35
+#define RX2 16
+#define TX2 17
 String ssidName, password;
-
+const char *nd123;
 const char *ssid;
 const char *password1;
 
@@ -193,8 +193,11 @@ lv_obj_t *slider12;
 static void checkblynk();
 // uart
 void uart();
+void dieukhien();
 //
-
+  static char buf_nd[4];
+  static char buf_ph[4];
+  static char buf_as[4];
 void wifi()
 {
   int i = 0;
@@ -309,7 +312,10 @@ void guiTask(void *pvParameters)
 BLYNK_WRITE(V0)
 { // This function gets called each time something changes on the widget
   String value = String(param.asInt());
-  Serial.println(value); // This gets the 'value' of the Widget as an integer
+  Serial.println(value);
+   // This gets the 'value' of the Widget as an integer
+ 
+   
   lv_label_set_text(slider_nd, value.c_str());
 
   lv_slider_set_value(slider1, value.toInt(), LV_ANIM_ON);
@@ -347,10 +353,11 @@ void readdata(void *pvParameters)
     // Serial.println("404!");
     // covid19();
     //Serial.println("");
-    
+  
     if (millis() - last >= 1000)
     {
       uart();
+        dieukhien();
       last = millis();
     }
 
@@ -1145,12 +1152,12 @@ static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
 {
   if (event == LV_EVENT_VALUE_CHANGED)
   {
-    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+    // static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf_ph, 4, "%u", lv_slider_get_value(slider));
 
-    lv_label_set_text(slider_ph, buf);
+    lv_label_set_text(slider_ph, buf_ph);
 
-    Blynk.virtualWrite(V1, buf);
+    Blynk.virtualWrite(V1, buf_ph);
   }
 }
 
@@ -1158,23 +1165,24 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event)
 {
   if (event == LV_EVENT_VALUE_CHANGED)
   {
-    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
+    // static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf_nd, 4, "%u", lv_slider_get_value(slider));
 
-    lv_label_set_text(slider_nd, buf);
+    lv_label_set_text(slider_nd, buf_nd);
 
-    Blynk.virtualWrite(V0, buf);
+    Blynk.virtualWrite(V0, buf_nd);
+   
   }
 }
 static void slider_event_as(lv_obj_t *slider, lv_event_t event)
 {
   if (event == LV_EVENT_VALUE_CHANGED)
   {
-    static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
-    snprintf(buf, 4, "%u", lv_slider_get_value(slider));
-    lv_label_set_text(slider_as, buf);
+    // static char buf[4]; /* max 3 bytes for number plus 1 null terminating byte */
+    snprintf(buf_as, 4, "%u", lv_slider_get_value(slider));
+    lv_label_set_text(slider_as, buf_as);
 
-    Blynk.virtualWrite(V2, buf);
+    Blynk.virtualWrite(V2, buf_as);
   }
 }
 static void checkblynk()
@@ -1210,31 +1218,36 @@ void uart()
   }
 
   int data333 = root["time"];
-  String nd = root["ND:"];
+   nd123 = root["ND:"];
   Serial.print("Time: ");
   Serial.print(data333);
   Serial.println();
   Serial.print("Nhiet do: ");
-   lv_label_set_text(lbNd,nd.c_str());
-    Blynk.virtualWrite(V5, nd.c_str());
-  Serial.print(nd);
+   lv_label_set_text(lbNd,nd123);
+    Blynk.virtualWrite(V5, nd123);
+  Serial.print(nd123);
   Serial.println();
   String test = Serial2.readString();
-  // put your main code here, to run repeatedly:
-  //  Serial.print("data:");
-  //  Serial.println(test);
-  //  if(test.indexOf("s")>=0){
-  //   Serial.println("bat thiet bi 1");
-  //   }
-  //   int timN,timD = -1;
-  //  timN=test.indexOf("N");
-  //   timD=test.indexOf("D");
-  //   if (timN >=0&&timD>=0)
-  //   {
-  //     String dulieu ="";
-  //     dulieu = test.substring(timN+1,timD);
-  //     Serial.print("dulieu");
-  //       Serial.print(dulieu);
-  //     lv_label_set_text(lbDN, dulieu.c_str());
-  // }
+
 }
+void dieukhien(){
+  Serial.print("Nhiet do kiem tra:");
+  Serial.print(nd123);
+  Serial.println();
+  Serial.print("kiemtra bien: ");
+  Serial2.print(buf_nd);
+  Serial.println();
+// char to float sai ham atof()
+  if (atof(nd123)>=atof(buf_nd))
+  {
+    Serial.println("demo");
+    Serial2.println("s");
+  }
+  else{
+     Serial.println("demo1");
+       Serial2.println("a");
+  }
+  
+}
+
+// mai doi lai chan 34-35 thanh 16 17

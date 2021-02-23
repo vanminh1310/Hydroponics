@@ -35,7 +35,7 @@ void loop() {
  String  test = Serial2.readString();
  // put your main code here, to run repeatedly:
 Serial.print("data:");
-Serial.println(test);
+Serial2.println(test);
 if(test.indexOf("s")>=0){
  Serial.println("bat thiet bi 1");
  }
