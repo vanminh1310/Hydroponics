@@ -28,12 +28,11 @@ String ssidName, password;
 const char *ssid;
 const char *password1;
 
-char ssida[] = "TATUYEN";       // tên wifi cần truy cập
-char pass[] = "1234567890"; 
+char ssida[] = "TATUYEN"; // tên wifi cần truy cập
+char pass[] = "1234567890";
 
 unsigned long timeout = 10000; // 10sec
- long last = 0;
-
+long last = 0;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 7 * 3600); // dich mu gio sang mui gio Viet Nam
@@ -187,12 +186,12 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *slider_nd;
 static void slider_event_as(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *slider_as;
- lv_obj_t *slider;
- lv_obj_t *slider1;
- lv_obj_t *slider12;
-//Blynk 
-static void checkblynk(); 
-// uart 
+lv_obj_t *slider;
+lv_obj_t *slider1;
+lv_obj_t *slider12;
+//Blynk
+static void checkblynk();
+// uart
 void uart();
 //
 
@@ -220,7 +219,7 @@ void wifi()
 void setup()
 {
   Serial.begin(9600);
-  Serial2.begin(9600,SERIAL_8N1,RX2,TX2);
+  Serial2.begin(9600, SERIAL_8N1, RX2, TX2);
   xTaskCreate(guiTask,
               "gui",
               4096 * 2,
@@ -228,13 +227,13 @@ void setup()
               2,
               NULL);
 
-  // vTaskDelay(1000);
-  // xTaskCreate(readdata,
-  //             "espnowTask",
-  //             4096*2,
-  //             NULL,
-  //             0,
-  //             NULL);
+  vTaskDelay(1000);
+  xTaskCreate(readdata,
+              "espnowTask",
+              4096*2,
+              NULL,
+              1,
+              NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
   last = millis();
@@ -248,7 +247,7 @@ void guiTask(void *pvParameters)
   ledcAttachPin(32, 10);
   analogReadResolution(10);
   ledcWrite(10, 768);
- Blynk.config(auth, "iot.htpro.vn", 8080);
+  Blynk.config(auth, "iot.htpro.vn", 8080);
   // Serial.begin(9600); /* prepare for possible serial debug */
 
   //readeeprom();
@@ -259,7 +258,7 @@ void guiTask(void *pvParameters)
   //   }
 
   lv_init();
-  
+
 #if USE_LV_LOG != 0
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif
@@ -299,66 +298,64 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-        testrandom();
+    testrandom();
     checkwifi();
     lv_task_handler();
-  Blynk.run();
+    Blynk.run();
 
-  if(millis()-last>=10000){
-    uart();
-   last = millis();
-  }
   }
 }
- 
-BLYNK_WRITE(V0){  // This function gets called each time something changes on the widget
+
+BLYNK_WRITE(V0)
+{ // This function gets called each time something changes on the widget
   String value = String(param.asInt());
-  Serial.println(value);  // This gets the 'value' of the Widget as an integer
- lv_label_set_text(slider_nd, value.c_str());
+  Serial.println(value); // This gets the 'value' of the Widget as an integer
+  lv_label_set_text(slider_nd, value.c_str());
 
- 	lv_slider_set_value(slider1, value.toInt(), LV_ANIM_ON);
+  lv_slider_set_value(slider1, value.toInt(), LV_ANIM_ON);
 }
 
-BLYNK_WRITE(V1){  // This function gets called each time something changes on the widget
+BLYNK_WRITE(V1)
+{ // This function gets called each time something changes on the widget
   String value1 = String(param.asInt());
-  Serial.println(value1);  // This gets the 'value' of the Widget as an integer
- lv_label_set_text(slider_ph, value1.c_str());
+  Serial.println(value1); // This gets the 'value' of the Widget as an integer
+  lv_label_set_text(slider_ph, value1.c_str());
 
- 	lv_slider_set_value(slider, value1.toInt(), LV_ANIM_ON);
+  lv_slider_set_value(slider, value1.toInt(), LV_ANIM_ON);
 }
-// ham toInt chuyen doi ve dang nguyen 
-BLYNK_WRITE(V2){  // This function gets called each time something changes on the widget
+// ham toInt chuyen doi ve dang nguyen
+BLYNK_WRITE(V2)
+{ // This function gets called each time something changes on the widget
   String value2 = String(param.asInt());
-  Serial.println(value2);  // This gets the 'value' of the Widget as an integer
- lv_label_set_text(slider_as, value2.c_str());
+  Serial.println(value2); // This gets the 'value' of the Widget as an integer
+  lv_label_set_text(slider_as, value2.c_str());
   // int vale = param.asInt();
-   	lv_slider_set_value(slider12, value2.toInt(), LV_ANIM_ON);
+  lv_slider_set_value(slider12, value2.toInt(), LV_ANIM_ON);
 }
 
+void readdata(void *pvParameters)
+{
+  vTaskDelay(1000);
+  Serial.print("Task2 running on core ");
+// Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);
+//  checkblynk();
+ //  dong bo gia tri
 
-
-
-
-// void readdata(void *pvParameters)
-// {
-//   vTaskDelay(1000);
-//   Serial.print("Task2 running on core ");
-// // Blynk.begin(auth, ssida, pass,"iot.htpro.vn", 8080);  
-// //  checkblynk();
-//  //  dong bo gia tri 
-
- 
-
- 
-//   Serial.println(xPortGetCoreID());
-//   while (1)
-//   {
-//     // Serial.println("404!");
-//     // covid19();
-//     //Serial.println("");
+  Serial.println(xPortGetCoreID());
+  while (1)
+  {
+    // Serial.println("404!");
+    // covid19();
+    //Serial.println("");
     
-//   }
-//}
+    if (millis() - last >= 1000)
+    {
+      uart();
+      last = millis();
+    }
+
+  }
+}
 void loop()
 {
 }
@@ -516,15 +513,15 @@ static void lv_main()
   lv_obj_set_pos(labelphantram, 55, 10);
 
   lv_obj_t *labelND = lv_label_create(tab1, NULL);
-  lv_label_set_text(labelND, "Temperature: ");
+  lv_label_set_text(labelND, "Nhietdo:");
   lv_obj_set_pos(labelND, 80, 10);
   lbNd = lv_label_create(tab1, NULL);
-  lv_obj_set_pos(lbNd, 195, 10);
+  lv_obj_set_pos(lbNd, 155, 10);
   lv_obj_set_style_local_text_color(lbNd, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
   lv_obj_t *labeldc = lv_label_create(tab1, NULL);
   lv_label_set_text(labeldc, "°C");
   lv_obj_set_style_local_text_color(labeldc, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
-  lv_obj_set_pos(labeldc, 215, 10);
+  lv_obj_set_pos(labeldc, 200, 10);
 
   lv_obj_t *labelAS = lv_label_create(tab1, NULL);
   lv_label_set_text(labelAS, "AS: ");
@@ -607,9 +604,8 @@ static void checkwifi()
   else
   {
     lv_obj_set_style_local_text_color(label_icon_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN); //set mau cho chu ki tu
-    
+
     timetest();
-     
   }
 }
 
@@ -929,7 +925,7 @@ boolean readeeprom()
     Serial.print("Password: ");
     Serial.println(pass.c_str());
     WiFi.begin(ssid.c_str(), pass.c_str());
-    
+
     //ket noi voi mang WIFI duoc luu trong EEPROM
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -947,12 +943,11 @@ boolean readeeprom()
     {
       Serial.println("mat khau khong dung xin vui long thu lai");
       lv_label_set_text(namewifi, "#FF0000 No Connected #");
-      //Blynk.begin(auth, ssid.c_str(), pass.c_str(),"iot.htpro.vn", 8080); 
+      //Blynk.begin(auth, ssid.c_str(), pass.c_str(),"iot.htpro.vn", 8080);
     }
     else
     {
       lv_label_set_text(namewifi, "#32CD32 Connected #");
-      
     }
   }
 }
@@ -1039,14 +1034,14 @@ static void testrandom()
 {
   String aaa = String(random(1, 100));
   lv_label_set_text(lbPH, aaa.c_str());
-  lv_label_set_text(lbNd, aaa.c_str());
+  // lv_label_set_text(lbNd, aaa.c_str());
   lv_label_set_text(AS, aaa.c_str());
   lv_label_set_text(lbNdN, aaa.c_str());
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
- // lv_label_set_text(lbDN, aaa.c_str());
-   Blynk.virtualWrite(V5, aaa.c_str()); 
-     Blynk.virtualWrite(V6, aaa.c_str()); 
+  // lv_label_set_text(lbDN, aaa.c_str());
+ 
+  Blynk.virtualWrite(V6, aaa.c_str());
 }
 
 // static void covid19(){
@@ -1130,7 +1125,7 @@ static void icondash()
   lv_label_set_text(asname, "ANH SANG : ");
   lv_obj_set_style_local_text_color(asname, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLUE);
 
-slider12 = lv_slider_create(src3, NULL);
+  slider12 = lv_slider_create(src3, NULL);
   lv_obj_set_width(slider12, LV_DPI * 2);
   lv_obj_align(slider12, NULL, LV_ALIGN_IN_TOP_MID, 0, 190);
   lv_obj_set_event_cb(slider12, slider_event_as);
@@ -1140,13 +1135,11 @@ slider12 = lv_slider_create(src3, NULL);
   lv_label_set_text(slider_as, "0");
   lv_obj_set_auto_realign(slider_as, true);
   lv_obj_align(slider_as, slider, LV_ALIGN_CENTER, 0, 130);
-   // lv_slider_set_type(slider12, LV_SLIDER_TYPE_RANGE);
+  // lv_slider_set_type(slider12, LV_SLIDER_TYPE_RANGE);
 
-
-    Blynk.syncVirtual(V1);
-    Blynk.syncVirtual(V0);
-    Blynk.syncVirtual(V2);
-
+  Blynk.syncVirtual(V1);
+  Blynk.syncVirtual(V0);
+  Blynk.syncVirtual(V2);
 }
 static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
 {
@@ -1156,9 +1149,8 @@ static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_ph, buf);
- 
-    Blynk.virtualWrite(V1, buf); 
 
+    Blynk.virtualWrite(V1, buf);
   }
 }
 
@@ -1171,7 +1163,7 @@ static void slider_event_nd(lv_obj_t *slider, lv_event_t event)
 
     lv_label_set_text(slider_nd, buf);
 
-    Blynk.virtualWrite(V0, buf); 
+    Blynk.virtualWrite(V0, buf);
   }
 }
 static void slider_event_as(lv_obj_t *slider, lv_event_t event)
@@ -1182,58 +1174,67 @@ static void slider_event_as(lv_obj_t *slider, lv_event_t event)
     snprintf(buf, 4, "%u", lv_slider_get_value(slider));
     lv_label_set_text(slider_as, buf);
 
-    Blynk.virtualWrite(V2, buf); 
-
+    Blynk.virtualWrite(V2, buf);
   }
 }
-static void checkblynk(){
-    if (!Blynk.connected()) {
+static void checkblynk()
+{
+  if (!Blynk.connected())
+  {
     Serial.println("Lost connection");
-    if(Blynk.connect()) {
+    if (Blynk.connect())
+    {
       Serial.println("Reconnected");
       Blynk.syncAll();
     }
-    else {
+    else
+    {
       Serial.println("Not reconnected");
     }
   }
 }
-void uart(){
+void uart()
+{
   StaticJsonBuffer<1000> jsonBuffer;
-  JsonObject& root = jsonBuffer.parseObject(Serial2);
+  JsonObject &root = jsonBuffer.parseObject(Serial2);
   if (root == JsonObject::invalid())
     return;
 
   root.prettyPrintTo(Serial2);
 
   // Test if parsing succeeds.
-  if (!root.success()) {
+  if (!root.success())
+  {
     Serial.println("parseObject() failed");
     return;
   }
- 
-    int data333=root["time"];
-   Serial.print("Time: ");
-    Serial.print(data333);
-     Serial.println();
-  String  test = Serial2.readString();
-  // put your main code here, to run repeatedly:
- Serial.print("data:");
- Serial.println(test);
- if(test.indexOf("s")>=0){
-  Serial.println("bat thiet bi 1");
-  }
-  int timN,timD = -1;
- timN=test.indexOf("N");
-  timD=test.indexOf("D");
-  if (timN >=0&&timD>=0)
-  {
-    String dulieu ="";
-    dulieu = test.substring(timN+1,timD);
-    Serial.print("dulieu");
-      Serial.print(dulieu);
-    lv_label_set_text(lbDN, dulieu.c_str());
-  }
-  
 
+  int data333 = root["time"];
+  String nd = root["ND:"];
+  Serial.print("Time: ");
+  Serial.print(data333);
+  Serial.println();
+  Serial.print("Nhiet do: ");
+   lv_label_set_text(lbNd,nd.c_str());
+    Blynk.virtualWrite(V5, nd.c_str());
+  Serial.print(nd);
+  Serial.println();
+  String test = Serial2.readString();
+  // put your main code here, to run repeatedly:
+  //  Serial.print("data:");
+  //  Serial.println(test);
+  //  if(test.indexOf("s")>=0){
+  //   Serial.println("bat thiet bi 1");
+  //   }
+  //   int timN,timD = -1;
+  //  timN=test.indexOf("N");
+  //   timD=test.indexOf("D");
+  //   if (timN >=0&&timD>=0)
+  //   {
+  //     String dulieu ="";
+  //     dulieu = test.substring(timN+1,timD);
+  //     Serial.print("dulieu");
+  //       Serial.print(dulieu);
+  //     lv_label_set_text(lbDN, dulieu.c_str());
+  // }
 }
