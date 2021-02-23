@@ -303,8 +303,9 @@ void guiTask(void *pvParameters)
     checkwifi();
     lv_task_handler();
   Blynk.run();
+
   if(millis()-last>=10000){
-  uart();
+    uart();
    last = millis();
   }
   }
@@ -1198,6 +1199,23 @@ static void checkblynk(){
   }
 }
 void uart(){
+  StaticJsonBuffer<1000> jsonBuffer;
+  JsonObject& root = jsonBuffer.parseObject(Serial2);
+  if (root == JsonObject::invalid())
+    return;
+
+  root.prettyPrintTo(Serial2);
+
+  // Test if parsing succeeds.
+  if (!root.success()) {
+    Serial.println("parseObject() failed");
+    return;
+  }
+ 
+    int data333=root["time"];
+   Serial.print("Time: ");
+    Serial.print(data333);
+     Serial.println();
   String  test = Serial2.readString();
   // put your main code here, to run repeatedly:
  Serial.print("data:");

@@ -28,13 +28,16 @@ void loop() {
     return;
   }
  
-  
-  String  test = Serial2.readString();
-  // put your main code here, to run repeatedly:
- Serial.print("data:");
- Serial.println(test);
- if(test.indexOf("s")>=0){
-  Serial.println("bat thiet bi 1");
-  }
- delay(200);
+    int data3=root["time"];
+   Serial.print("Time: ");
+    Serial.print(data3);
+     Serial.println();
+ String  test = Serial2.readString();
+ // put your main code here, to run repeatedly:
+Serial.print("data:");
+Serial.println(test);
+if(test.indexOf("s")>=0){
+ Serial.println("bat thiet bi 1");
+ }
+// delay(200);
 }
