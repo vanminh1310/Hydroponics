@@ -353,7 +353,7 @@ void readdata(void *pvParameters)
     // Serial.println("404!");
     // covid19();
     //Serial.println("");
-  
+
     if (millis() - last >= 1000)
     {
       uart();
@@ -1235,7 +1235,7 @@ void dieukhien(){
   Serial.print(nd123);
   Serial.println();
   Serial.print("kiemtra bien: ");
-  Serial2.print(buf_nd);
+  Serial.print(buf_nd);
   Serial.println();
 // char to float sai ham atof()
   if (atof(nd123)>=atof(buf_nd))
