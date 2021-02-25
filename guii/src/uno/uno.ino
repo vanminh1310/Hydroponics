@@ -39,7 +39,7 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   // tao bien json
-if(millis()-last>=10000){
+if(millis()-last>=1000){
   senduart();
   last=millis();
 }

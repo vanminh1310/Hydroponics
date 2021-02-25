@@ -18,8 +18,20 @@
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <FirebaseESP32.h>
+// thu vien firebase
+#define FIREBASE_HOST "iot59tdh-default-rtdb.firebaseio.com"
+#define FIREBASE_AUTH "ngRiubKaRp2TUnoEz2LOMO2nqWa9RQC24UiWSwLF"
+
+
+
+//Define FirebaseESP32 data object
+FirebaseData firebaseData;
+// 
+// blynk
 #include <BlynkSimpleEsp32.h>
 char auth[] = "bfZd5TubQBz_veStIa1u8Uc07f5h7yA1";
+// 
 #include <SoftwareSerial.h>
 #define RX2 16
 #define TX2 17
@@ -190,6 +202,8 @@ lv_obj_t *slider;
 lv_obj_t *slider1;
 lv_obj_t *slider12;
 //Blynk
+
+
 static void checkblynk();
 // uart
 void uart();
@@ -227,7 +241,7 @@ void setup()
               "gui",
               4096 * 2,
               NULL,
-              2,
+              1,
               NULL);
 
   vTaskDelay(1000);
@@ -235,11 +249,12 @@ void setup()
               "espnowTask",
               4096*2,
               NULL,
-              1,
+              3,
               NULL);
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
   last = millis();
+    
 }
 
 void guiTask(void *pvParameters)
@@ -251,6 +266,7 @@ void guiTask(void *pvParameters)
   analogReadResolution(10);
   ledcWrite(10, 768);
   Blynk.config(auth, "iot.htpro.vn", 8080);
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   // Serial.begin(9600); /* prepare for possible serial debug */
 
   //readeeprom();
@@ -354,10 +370,14 @@ void readdata(void *pvParameters)
     // covid19();
     //Serial.println("");
 
-    if (millis() - last >= 1000)
+    if (millis() - last >= 5000)
     {
-      uart();
+         uart();
         dieukhien();
+        
+  // Blynk.syncVirtual(V1);
+  // Blynk.syncVirtual(V0);
+  // Blynk.syncVirtual(V2);
       last = millis();
     }
 
@@ -1047,7 +1067,7 @@ static void testrandom()
   lv_label_set_text(lbDA, aaa.c_str());
   lv_label_set_text(lbMN, aaa.c_str());
   // lv_label_set_text(lbDN, aaa.c_str());
- 
+  
   Blynk.virtualWrite(V6, aaa.c_str());
 }
 
@@ -1156,7 +1176,7 @@ static void slider_event_ph(lv_obj_t *slider, lv_event_t event)
     snprintf(buf_ph, 4, "%u", lv_slider_get_value(slider));
 
     lv_label_set_text(slider_ph, buf_ph);
-
+     Firebase.setInt(firebaseData, "Floors1/G",int(buf_ph) );
     Blynk.virtualWrite(V1, buf_ph);
   }
 }
@@ -1223,6 +1243,7 @@ void uart()
   Serial.print(data333);
   Serial.println();
   Serial.print("Nhiet do: ");
+   Firebase.setFloat(firebaseData, "T", atof(nd123));
    lv_label_set_text(lbNd,nd123);
     Blynk.virtualWrite(V5, nd123);
   Serial.print(nd123);
