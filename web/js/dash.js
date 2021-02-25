@@ -39,6 +39,46 @@
     }
   });
 
+  // read du lieu firebase 
+
+  var nhietdo = firebase.database().ref().child("Sensor/T1")
+  nhietdo.on('value',function(nhietdo){
+    // AS.innerHTML=nhietdo.val();
+    setGaugeValuend(gaugeElementnd, nhietdo.val());
+    console.log(nhietdo.val());
+    });
+  // ph
+    var doph = firebase.database().ref().child("Sensor/PH")
+  doph.on('value',function(doph){
+    // AS.innerHTML=doph.val();
+    setGaugeValueph(gaugeElementph, doph.val());
+    console.log(doph.val());
+    });
+//do am
+var doam = firebase.database().ref().child("Sensor/DA")
+doam.on('value',function(doam){
+  // AS.innerHTML=doam.val();
+  setGaugeValueda(gaugeElementda, doam.val());
+
+  console.log(doam.val());
+});
+// anh sang
+var anhsang = firebase.database().ref().child("Sensor/AS")
+anhsang.on('value',function(anhsang){
+  // AS.innerHTML=anhsang.val();
+  setGaugeValueas(gaugeElementas, anhsang.val());
+
+  console.log(anhsang.val());
+});
+// nhiet do nuoc
+var ndnuoc = firebase.database().ref().child("Sensor/NDN")
+ndnuoc.on('value',function(ndnuoc){
+  // AS.innerHTML=ndnuoc.val();
+  setGaugeValuendn(gaugeElementndn,  ndnuoc.val());
+  
+
+  console.log(ndnuoc.val());
+});
 // box
 const gaugeElement = document.querySelector(".gauge");
 

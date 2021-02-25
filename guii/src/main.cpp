@@ -45,6 +45,7 @@ char pass[] = "1234567890";
 
 unsigned long timeout = 10000; // 10sec
 long last = 0;
+long last1 = 0;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", 7 * 3600); // dich mu gio sang mui gio Viet Nam
@@ -241,7 +242,7 @@ void setup()
               "gui",
               4096 * 2,
               NULL,
-              1,
+              2,
               NULL);
 
   vTaskDelay(1000);
@@ -254,7 +255,7 @@ void setup()
   EEPROM.begin(512);
   readeeprom(); /* pin task to core 0 */
   last = millis();
-    
+
 }
 
 void guiTask(void *pvParameters)
@@ -317,10 +318,13 @@ void guiTask(void *pvParameters)
 
   while (1)
   {
-    testrandom();
+    //
+ //testrandom();
+    
     checkwifi();
     lv_task_handler();
     Blynk.run();
+    
 
   }
 }
@@ -370,8 +374,9 @@ void readdata(void *pvParameters)
     // covid19();
     //Serial.println("");
 
-    if (millis() - last >= 5000)
+    if (millis() - last >= 1000)
     {
+      testrandom();
          uart();
         dieukhien();
         
@@ -1061,14 +1066,20 @@ static void testrandom()
 {
   String aaa = String(random(1, 100));
   lv_label_set_text(lbPH, aaa.c_str());
+  Firebase.setInt(firebaseData,"Sensor/PH",aaa.toInt());
   // lv_label_set_text(lbNd, aaa.c_str());
   lv_label_set_text(AS, aaa.c_str());
+    Firebase.setInt(firebaseData,"Sensor/AS",aaa.toInt());
   lv_label_set_text(lbNdN, aaa.c_str());
+      Firebase.setInt(firebaseData,"Sensor/NDN",aaa.toInt());
   lv_label_set_text(lbDA, aaa.c_str());
+      Firebase.setInt(firebaseData,"Sensor/DA",aaa.toInt());
   lv_label_set_text(lbMN, aaa.c_str());
+      Firebase.setInt(firebaseData,"Sensor/MN",aaa.toInt());
   // lv_label_set_text(lbDN, aaa.c_str());
   
   Blynk.virtualWrite(V6, aaa.c_str());
+  
 }
 
 // static void covid19(){
@@ -1243,7 +1254,7 @@ void uart()
   Serial.print(data333);
   Serial.println();
   Serial.print("Nhiet do: ");
-   Firebase.setFloat(firebaseData, "T", atof(nd123));
+   Firebase.setFloat(firebaseData, "Sensor/T1", atof(nd123));
    lv_label_set_text(lbNd,nd123);
     Blynk.virtualWrite(V5, nd123);
   Serial.print(nd123);

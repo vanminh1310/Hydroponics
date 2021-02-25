@@ -53,7 +53,7 @@ var time = document.getElementById('Time')
 var PH = document.getElementById('PH')
 
 
-//
+// doc du lieu firebase 
 var reaname = firebase.database().ref().child("Strawberry/Name")
 var readT = firebase.database().ref().child("Strawberry/T")
 var readDA = firebase.database().ref().child("Strawberry/DA")
