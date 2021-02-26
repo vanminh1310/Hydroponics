@@ -3,3 +3,22 @@ https://photos.app.goo.gl/q5G4ji6WTbyKMeDT6
 link web: https://iot-joy.netlify.app
             Tk: admin1@gmail.com
             Mk:123456
+
+Dự án dùng esp32 
+Thiết kế giao diện điều khiển trên màn hình ili9341 
+Thiết kế giao diện điều khiển qua Web dựa trên backend là firebase 
+Kết nối với ứng dụng Blynk để dễ dàng điều khiển 
+Hướng xây dựng: hệ thống xây dựng với hai chế độ Auto và Manual 
+    Chế độ Auto: người dùng chọn loại cây chồng trên web - các thông số như nhiệt độ, độ ẩm... được lưu trong database sẽ được esp lấy xuống và hoạt động theo các thông số đó .
+    Manual : Người dung chọn cây chồng hệ thống gợi ý các thông số- người dùng có thể điều khiển bằng tay những thôg số đó qua bảng điều khiển .
+
+Tiến độ thực hiện: 
+    - Đã xây dựng được giao diện hiển thị, điều khiển trên esp
+    - xây dựng được web kết nối với database
+    - kết nối đọc giá trị một số cảm biến gửi giá trị lên app và web realtime 
+    
+Tiếp theo: 
+    - xây dựng các khối điều khiển dựa trên database
+    - xây dựng phần cứng
+    - Viết báo cáo 
+
