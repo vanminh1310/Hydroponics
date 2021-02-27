@@ -167,3 +167,32 @@ function showErrorToast() {
     duration: 5000
   });
 }
+// function autobtn(){
+//   firebase.database().ref().child("id").set("3245");
+  
+ 
+// }
+x= document.getElementById('btnauto')
+function sukien1(){
+  console.log("oke da gui")
+  firebase.database().ref().child("id").set("1");
+}
+function sukien2(){
+  window.open('dashboad.html','_self')
+}
+function sukien3(){
+  window.open('dashboad.html','_self')
+}
+function sukien4(){
+  firebase.database().ref().child("id").set("0");
+}
+
+//  gui du lieu lenj set 
+x.addEventListener("click", sukien1);
+//x.addEventListener("click", sukien2);
+// document.getElementById('btnauto').onclick=function writeUserData(name) {
+//   firebase.database().ref().child("id").set("aas");
+//   //setTimeout(alert("After 5 seconds!"),2000);
+  
+ 
+// }

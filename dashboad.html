@@ -1,153 +1,158 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/web/css/dash.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
-    <link rel="stylesheet" href="/web/css/nf.css">
-  
-  </head>
-  <body>
-      <div class="navbar navbar_3">
-            <div class="navbar_left">
-              <div class="logo">Hydroponic <span>Joy</span></div>
-              <ul class="menu">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <!-- <li><a href="#">Contact</a></li>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/web/css/dash.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="/web/css/nf.css">
+
+</head>
+
+<body>
+  <div class="navbar navbar_3">
+    <div class="navbar_left">
+      <div class="logo">Hydroponic <span>Joy</span></div>
+      <ul class="menu">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <!-- <li><a href="#">Contact</a></li>
                 <li><a href="#">Services</a></li> -->
-                <li><a href="#">Profile</a></li>
-              </ul>
-            </div>
-            <div class="navbar_right">
-              <ul>
-                <li><a href="#">Notifications</a></li>
-                <li><a href="#" onclick="logout()" >Logout</a></li>
-              </ul>
-            </div>
-          </div>
-<div class="divv">
-  <!-- switch -->
-<div class="A">
-  <h5 style="color: dodgerblue;">Chuyển đổi chế độ </h5>
-  <div style="display: flex;margin-left:38vw;">
-    <h6 style="margin-top: 3.5vh; margin-right: 2vw;">Manual</h6>
-
-  <label class="switch">
-    <input type="checkbox">
-    <span class="slider round"></span>
-  </label>
-  <h6 style="margin-top: 3.5vh; margin-left: 2vw;">Auto</h6>
+        <li><a href="#">Profile</a></li>
+      </ul>
+    </div>
+    <div class="navbar_right">
+      <ul>
+        <li><a href="#">Notifications</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </div>
   </div>
-</div>
- 
-            <div class="NLMT">
-             
+  <div class="divv">
+    <!-- switch -->
+    <div class="A">
+      <h5 style="color: dodgerblue;">Chuyển đổi chế độ </h5>
+      <div style="display: flex;margin-left:38vw;">
+        <h6 style="margin-top: 3.5vh; margin-right: 2vw;">Manual</h6>
 
-                  <h5 style ="color: dodgerblue;">Năng lượng mặt trời<h5>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <h6 style="margin-top: 3.5vh; margin-left: 2vw;">Auto</h6>
+      </div>
+    </div>
 
-                  <div  style="display: flex; margin-top: 20px; margin-left: 19vw;">
-               
-                  <div class="gauge">
-                    <div class="gauge__body">
-                      <div class="gauge__fill"></div>
-                      <div class="gauge__cover"></div>
-                    </div>
-                    <h6>Điện năng</h6>
-                  </div>
-                 
-                  <div class="gauge1">
-                    <div class="gauge__body">
-                      <div class="gauge__fill1"></div>
-                      <div class="gauge__cover1"></div>
-                    </div>
-                    <h6>Nhiệt độ</h6>
-                  </div>
-                  
+    <div class="NLMT">
 
-                </div>
-                <button onclick="window.open('dashboad.html','_self')" class="btn_auto">Làm mát pin</button>
-            </div>
-            <div class="KR">
-                  <h5  style="color: dodgerblue;">Khoang trồng rau<h5>
 
-                    <!-- div chu thoi gian -->
-                    <div style="display: flex;" class="nametree">
-                      <span style="margin-left: 25vw;">Loại cây:<strong style="color: rgb(231, 61, 61);">Dâu Tây</strong> </span>
-                      <span style="margin-left: 20vw;">Thời gian trồng cây: <strong style="color: rgb(231, 61, 61) ;" >1 month</strong> </span>
-                    </div>
-                    <!-- div gauge -->
-                    <div  style="display: flex; margin-top:30px; margin-left: 5vw;" class=" gau">
-                      <div class="gauge_ph">
-                        <div class="gauge__body">
-                          <div class="gauge__fill_ph"></div>
-                          <div class="gauge__cover_ph"></div>
-                        </div>
-                        <h6>Độ PH</h6>
-                      </div>
-                      <div class="gauge_da">
-                        <div class="gauge__body">
-                          <div class="gauge__fill_da"></div>
-                          <div class="gauge__cover_da"></div>
-                        </div>
-                        <h6>Độ ẩm</h6>
-                      </div>
-                      <div class="gauge_as">
-                        <div class="gauge__body">
-                          <div class="gauge__fill_as"></div>
-                          <div class="gauge__cover_as"></div>
-                        </div>
-                        <h6>Ánh sáng </h6>
-                      </div>
-                      <div class="gauge_ndn">
-                        <div class="gauge__body">
-                          <div class="gauge__fill_ndn"></div>
-                          <div class="gauge__cover_ndn"></div>
-                        </div>
-                        <h6>Nhiệt độ nước</h6>
-                      </div>
-                      <div class="gauge_nd">
-                        <div class="gauge__body">
-                          <div class="gauge__fill_nd"></div>
-                          <div class="gauge__cover_nd"></div>
-                        </div>
-                        <h6>Nhiệt độ</h6>
-                      </div>
+      <h5 style="color: dodgerblue;">Năng lượng mặt trời<h5>
 
-                    </div>
+          <div style="display: flex; margin-top: 20px; margin-left: 19vw;">
 
-            </div>
-            <div class="BC">
-                  <span>Biểu đồ thống kê</span>
-
+            <div class="gauge">
+              <div class="gauge__body">
+                <div class="gauge__fill"></div>
+                <div class="gauge__cover"></div>
+              </div>
+              <h6>Điện năng</h6>
             </div>
 
-            <div id="modal_ecall" class="modal_ecall">
-                  <div class="modal_content_ecall">
-                  <div class="modal_body_ecall">
-                        <h1 style="color: red;" class="tb">Thông báo <i class="fas fa-exclamation"></i>  </h1>
-                        <!-- <img class="img" src="img/warring.png"> -->
-                        <br>
-                        <h3>Dường như bạn chưa đăng nhập</h3> 
-                        <h3>Hãy đăng nhập để tiếp tục nhé!</h3>
-                  </div>   
-                  <div class="btn_ecall">
-                        <button id="bnt1" onclick="window.open('index.html','_self')" class="btn1">Đăng nhập</button>
-                        
-                  </div>
-                  </div>
-                  </div>
-</div>
-                  <div id="toast"></div>
-<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+            <div class="gauge1">
+              <div class="gauge__body">
+                <div class="gauge__fill1"></div>
+                <div class="gauge__cover1"></div>
+              </div>
+              <h6>Nhiệt độ</h6>
+            </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
-      <script src="/web/js/dash.js"></script>
 
-  </body>
+          </div>
+          <button onclick="window.open('dashboad.html','_self')" class="btn_auto">Làm mát pin</button>
+    </div>
+    <div class="KR">
+      <h5 style="color: dodgerblue;">Khoang trồng rau<h5>
+
+          <!-- div chu thoi gian -->
+          <div style="display: flex;" class="nametree">
+            <span style="margin-left: 25vw;">Loại cây:<strong style="color: rgb(231, 61, 61);">Dâu Tây</strong> </span>
+            <span style="margin-left: 20vw;">Thời gian trồng cây: <strong style="color: rgb(231, 61, 61) ;">1
+                month</strong> </span>
+          </div>
+          <!-- div gauge -->
+          <div style="display: flex; margin-top:30px; margin-left: 5vw;" class=" gau">
+            <div class="gauge_ph">
+              <div class="gauge__body">
+                <div class="gauge__fill_ph"></div>
+                <div class="gauge__cover_ph"></div>
+              </div>
+              <h6>Độ PH</h6>
+            </div>
+            <div class="gauge_da">
+              <div class="gauge__body">
+                <div class="gauge__fill_da"></div>
+                <div class="gauge__cover_da"></div>
+              </div>
+              <h6>Độ ẩm</h6>
+            </div>
+            <div class="gauge_as">
+              <div class="gauge__body">
+                <div class="gauge__fill_as"></div>
+                <div class="gauge__cover_as"></div>
+              </div>
+              <h6>Ánh sáng </h6>
+            </div>
+            <div class="gauge_ndn">
+              <div class="gauge__body">
+                <div class="gauge__fill_ndn"></div>
+                <div class="gauge__cover_ndn"></div>
+              </div>
+              <h6>Nhiệt độ nước</h6>
+            </div>
+            <div class="gauge_nd">
+              <div class="gauge__body">
+                <div class="gauge__fill_nd"></div>
+                <div class="gauge__cover_nd"></div>
+              </div>
+              <h6>Nhiệt độ</h6>
+            </div>
+
+          </div>
+
+    </div>
+    <div class="BC">
+      <span>Biểu đồ thống kê</span>
+
+    </div>
+
+    <div id="modal_ecall" class="modal_ecall">
+      <div class="modal_content_ecall">
+        <div class="modal_body_ecall">
+          <h1 style="color: red;" class="tb">Thông báo <i class="fas fa-exclamation"></i> </h1>
+          <!-- <img class="img" src="img/warring.png"> -->
+          <br>
+          <h3>Dường như bạn chưa đăng nhập</h3>
+          <h3>Hãy đăng nhập để tiếp tục nhé!</h3>
+        </div>
+        <div class="btn_ecall">
+          <button id="bnt1" onclick="window.open('index.html','_self')" class="btn1">Đăng nhập</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast"></div>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+  <script src="/web/js/dash.js"></script>
+
+</body>
+
 </html>
-                           
