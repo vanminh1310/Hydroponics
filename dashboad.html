@@ -20,6 +20,7 @@
       <div class="logo">Hydroponic <span>Joy</span></div>
       <ul class="menu">
         <li><a href="#">Home</a></li>
+        <li><a href="#">List</a></li>
         <li><a href="#">About</a></li>
         <!-- <li><a href="#">Contact</a></li>
                 <li><a href="#">Services</a></li> -->
@@ -37,14 +38,18 @@
     <!-- switch -->
     <div class="A">
       <h5 style="color: dodgerblue;">Chuyển đổi chế độ </h5>
+      <h5 style="margin-right: 70vw;">Hệ thống đang ở chế độ: <h5  id="chedo" style="color: dodgerblue; margin-right: 55vw; margin-top: -1vw;"></h5> </h5>
       <div style="display: flex;margin-left:38vw;">
-        <h6 style="margin-top: 3.5vh; margin-right: 2vw;">Manual</h6>
+        <!-- <h6 style="margin-top: 3.5vh; margin-right: 2vw;">Manual</h6> -->
 
-        <label class="switch">
-          <input type="checkbox">
-          <span class="slider round"></span>
+        <!-- <label id="test1234" class="switch">
+          <input  type="checkbox">
+          <span  class="slider round"></span> -->
+
+        <button onclick="btn_man_auto()" id="btn_auto_man" style="margin-top: 2vh; margin-left: 2.5vw; " class="btn_auto" ><h5 id="t_auto_man1">Auto</h5></button>
+
         </label>
-        <h6 style="margin-top: 3.5vh; margin-left: 2vw;">Auto</h6>
+        <!-- <h6 style="margin-top: 3.5vh; margin-left: 2vw;">Auto</h6> -->
       </div>
     </div>
 
@@ -92,6 +97,10 @@
                 <div class="gauge__cover_ph"></div>
               </div>
               <h6>Độ PH</h6>
+              <div id="slider_ph" class="slidecontainer">
+                <input type="range" min="1" max="10" value="3" class="slider" id="myRange">
+                <p><span id="demo"></span></p>
+              </div>
             </div>
             <div class="gauge_da">
               <div class="gauge__body">
@@ -99,6 +108,10 @@
                 <div class="gauge__cover_da"></div>
               </div>
               <h6>Độ ẩm</h6>
+              <div id="slider_da" class="slidecontainer">
+                <input type="range" min="1" max="10" value="3" class="slider" id="myRange">
+                <p><span id="demo_da"></span></p>
+                </div>
             </div>
             <div class="gauge_as">
               <div class="gauge__body">
@@ -106,13 +119,21 @@
                 <div class="gauge__cover_as"></div>
               </div>
               <h6>Ánh sáng </h6>
+              <div id="slider_as" class="slidecontainer">
+                <input type="range" min="1" max="10" value="3" class="slider" id="myRange">
+                <p><span id="demo_as"></span></p>
+              </div>
             </div>
-            <div class="gauge_ndn">
+            <div  class="gauge_ndn">
               <div class="gauge__body">
                 <div class="gauge__fill_ndn"></div>
                 <div class="gauge__cover_ndn"></div>
               </div>
               <h6>Nhiệt độ nước</h6>
+              <div id="slider_ndn" class="slidecontainer">
+                <input type="range" min="1" max="10" value="3" class="slider" id="myRange">
+                <p><span id="demo_ndn"></span></p>
+                </div>
             </div>
             <div class="gauge_nd">
               <div class="gauge__body">
@@ -120,11 +141,16 @@
                 <div class="gauge__cover_nd"></div>
               </div>
               <h6>Nhiệt độ</h6>
+              <div id="slider_nd" class="slidecontainer">
+                <input type="range" min="1" max="10" value="3" class="slider" id="myRange">
+                <p><span id="demo_nd"></span></p>
+              </div>
             </div>
 
           </div>
 
     </div>
+   
     <div class="BC">
       <span>Biểu đồ thống kê</span>
 

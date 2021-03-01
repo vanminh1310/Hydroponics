@@ -173,9 +173,10 @@ function showErrorToast() {
  
 // }
 x= document.getElementById('btnauto')
+
 function sukien1(){
   console.log("oke da gui")
-  firebase.database().ref().child("id").set("1");
+  firebase.database().ref().child("auto_man").set("1");
 }
 function sukien2(){
   window.open('dashboad.html','_self')
@@ -184,7 +185,7 @@ function sukien3(){
   window.open('dashboad.html','_self')
 }
 function sukien4(){
-  firebase.database().ref().child("id").set("0");
+  firebase.database().ref().child("auto_man").set("0");
 }
 
 //  gui du lieu lenj set 

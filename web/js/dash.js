@@ -275,3 +275,90 @@ function showErrorToast() {
     duration: 5000
   });
 }
+// switch 
+// document.addEventListener('DOMContentLoaded', function () {
+//   var checkbox = document.querySelector('input[type="checkbox"]');
+
+//   checkbox.addEventListener('change', function () {
+//     if (checkbox.checked) {
+//       // do this
+//       console.log('Auto');
+//       firebase.database().ref().child("auto_man").set("1");
+//     } else {
+//       // do that
+//       console.log('Not checked');
+//       firebase.database().ref().child("auto_man").set("0");
+//     }
+//   });
+// });
+// switch 
+var automan = firebase.database().ref().child("auto_man")
+var tes1 =document.getElementById('t_auto_man1')
+automan.on('value',function(automan){
+  // AS.innerHTML=automan.val();
+  
+  if(automan.val()==1){
+    console.log("auto")
+     tes1.innerText= "Auto"
+     tes1.style.color= "white"
+    document.getElementById('btn_auto_man').style.backgroundColor=' #4391f0'
+    document.getElementById('chedo').innerText="Auto"
+    document.getElementById('slider_nd').style.display='none'
+    document.getElementById('slider_ndn').style.display='none'
+    document.getElementById('slider_da').style.display='none'
+    document.getElementById('slider_as').style.display='none'
+    document.getElementById('slider_ph').style.display='none'
+  }
+  if(automan.val()==0){
+    console.log("man")
+
+    tes1.innerText= "Manual"
+    tes1.style.color= "back"
+    document.getElementById('btn_auto_man').style.backgroundColor='white'
+    document.getElementById('chedo').innerText="Manual"
+    document.getElementById('slider_nd').style.display='block'
+    document.getElementById('slider_ndn').style.display='block'
+    document.getElementById('slider_da').style.display='block'
+    document.getElementById('slider_as').style.display='block'
+    document.getElementById('slider_ph').style.display='block'
+  }
+  });
+
+ 
+ 
+  function btn_man_auto(){
+    if (tes1.innerHTML==="Manual"){
+       tes1.innerText= "Auto"
+       tes1.style.color= "white"
+     document.getElementById('btn_auto_man').style.backgroundColor=' #4391f0'
+     firebase.database().ref().child("auto_man").set("1");
+    }
+    
+    else{
+      tes1.innerText= "Manual"
+      tes1.style.color= "back"
+      document.getElementById('btn_auto_man').style.backgroundColor='white'
+      firebase.database().ref().child("auto_man").set("0");
+    }
+  }
+  // 
+  var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+var output_da = document.getElementById("demo_da");
+var output_nd = document.getElementById("demo_nd");
+var output_ndn = document.getElementById("demo_ndn");
+var output_as = document.getElementById("demo_as");
+
+output.innerHTML = slider.value;
+output_da.innerHTML=slider.value
+output_nd.innerHTML=slider.value
+output_ndn.innerHTML=slider.value
+output_as.innerHTML =slider.value
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+  output_da.innerHTML=this.value
+  output_nd.innerHTML=this.value
+  output_ndn.innerHTML=this.value
+  output_as.innerHTML =this.value
+}
