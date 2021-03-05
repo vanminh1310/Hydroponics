@@ -350,6 +350,17 @@ var output_ndn = document.getElementById("demo_ndn");
 var output_as = document.getElementById("demo_as");
 
 output.innerHTML = slider.value;
+
+
+ var doph_man = firebase.database().ref().child("man/ph")
+  doph_man.on('value',function(doph_man){
+    // AS.innerHTML=doph_man.val();
+    var test = doph_man.val();
+    output.innerHTML = doph_man.val()
+    slider = doph_man.val();
+    console.log(doph_man.val());
+    });
+
 output_da.innerHTML=slider.value
 output_nd.innerHTML=slider.value
 output_ndn.innerHTML=slider.value
@@ -357,6 +368,7 @@ output_as.innerHTML =slider.value
 
 slider.oninput = function() {
   output.innerHTML = this.value;
+  firebase.database().ref().child("man/ph").set(this.value);
   output_da.innerHTML=this.value
   output_nd.innerHTML=this.value
   output_ndn.innerHTML=this.value
