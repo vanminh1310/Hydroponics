@@ -343,6 +343,12 @@ automan.on('value',function(automan){
   }
   // 
   var slider = document.getElementById("myRange");
+  var s_h = document.getElementById("slider_h");
+  var s_nd_n = document.getElementById("slider_nd_n");
+  var s_nd = document.getElementById("slider_n_d");
+  var s_as = document.getElementById("slider_s");
+
+
 var output = document.getElementById("demo");
 var output_da = document.getElementById("demo_da");
 var output_nd = document.getElementById("demo_nd");
@@ -350,6 +356,11 @@ var output_ndn = document.getElementById("demo_ndn");
 var output_as = document.getElementById("demo_as");
 
 output.innerHTML = slider.value;
+output_da.innerHTML = s_h.value
+output_nd.innerHTML = s_nd.value
+output_ndn.innerHTML = s_nd.value
+output_as.innerHTML = s_as.value
+
 
 
  var doph_man = firebase.database().ref().child("man/ph")
@@ -361,19 +372,77 @@ output.innerHTML = slider.value;
     console.log(doph_man.val());
     });
 
-output_da.innerHTML=slider.value
-output_nd.innerHTML=slider.value
-output_ndn.innerHTML=slider.value
-output_as.innerHTML =slider.value
+
+
+
+var as_man = firebase.database().ref().child("man/as")
+    as_man.on('value',function(as_man){
+      // AS.innerHTML=as_man.val();
+      var test = as_man.val();
+      output_as.innerHTML = as_man.val()
+      
+      console.log(as_man.val());
+      });
+
+      var nd_n = firebase.database().ref().child("man/ndn")
+      nd_n.on('value',function(nd_n){
+        // AS.innerHTML=nd_n.val();
+        var test = nd_n.val();
+        output_ndn.innerHTML = nd_n.val()
+        
+        console.log(nd_n.val());
+        });
+
+        var nd_t = firebase.database().ref().child("man/nd")
+    nd_t.on('value',function(nd_t){
+      // AS.innerHTML=nd_t.val();
+      var test = nd_t.val();
+      output_nd.innerHTML = nd_t.val()
+      
+      console.log(nd_t.val());
+      });
+
+      var dam = firebase.database().ref().child("man/da")
+    dam.on('value',function(dam){
+      // AS.innerHTML=dam.val();
+      var test = dam.val();
+      output_da.innerHTML = dam.val()
+      
+      console.log(dam.val());
+      });
+
+
+
 
 slider.oninput = function() {
   output.innerHTML = this.value;
   firebase.database().ref().child("man/ph").set(this.value);
-  output_da.innerHTML=this.value
-  output_nd.innerHTML=this.value
-  output_ndn.innerHTML=this.value
-  output_as.innerHTML =this.value
+
 }
+
+
+s_as.oninput = function() {
+  output_as.innerHTML = this.value;
+  firebase.database().ref().child("man/as").set(this.value);
+
+}
+s_nd.oninput = function() {
+  output_nd.innerHTML = this.value;
+  firebase.database().ref().child("man/nd").set(this.value);
+
+}
+s_nd_n.oninput = function() {
+  output_ndn.innerHTML = this.value;
+  firebase.database().ref().child("man/ndn").set(this.value);
+
+}
+s_h.oninput = function() {
+  output_da.innerHTML = this.value;
+  firebase.database().ref().child("man/da").set(this.value);
+
+}
+
+
 
 
 
