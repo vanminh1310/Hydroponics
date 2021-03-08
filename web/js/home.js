@@ -67,6 +67,7 @@ var readtime= firebase.database().ref().child("Strawberry/Time")
 
 if(read=="DT"){
       console.log("tesst")
+      firebase.database().ref().child("man/as").set();
       reaname.on('value',function(reaname){
             name1.innerHTML=reaname.val();
             console.log(reaname.val());
