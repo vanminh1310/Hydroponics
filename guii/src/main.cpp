@@ -213,6 +213,14 @@ void dieukhien();
   static char buf_nd[4];
   static char buf_ph[4];
   static char buf_as[4];
+
+//get data firebase 
+void getdatafirebase();
+
+int auto_man;
+int id;
+
+
 void wifi()
 {
   int i = 0;
@@ -1282,4 +1290,31 @@ void dieukhien(){
   
 }
 
+
 // mai doi lai chan 34-35 thanh 16 17
+
+// get data firebase 
+void getdatafirebase(){
+ if (Firebase.getInt(firebaseData, "auto_man")) {
+
+    if (firebaseData.dataType() == "int") {
+     auto_man = firebaseData.intData();// bien kiem tra che do la auto hay man 0 la man 1 la out
+    }
+
+  } 
+   if (Firebase.getInt(firebaseData, "id")) {
+
+    if (firebaseData.dataType() == "int") {
+     id = firebaseData.intData();//kiem tra xem la loai cay nao 
+    }
+
+  } 
+  else {
+    Serial.println(firebaseData.errorReason());
+  }
+}
+void manaul(){
+  if(auto_man == 0 && id == 1){
+    Serial.print("Dau tay");
+  }
+}
