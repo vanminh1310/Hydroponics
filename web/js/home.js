@@ -67,7 +67,7 @@ var readtime= firebase.database().ref().child("Strawberry/Time")
 
 if(read=="DT"){
       console.log("tesst")
-      firebase.database().ref().child("man/as").set();
+      firebase.database().ref().child("id").set("1");
       reaname.on('value',function(reaname){
             name1.innerHTML=reaname.val();
             console.log(reaname.val());
@@ -93,8 +93,6 @@ if(read=="DT"){
                                           PH.innerHTML=readPH.val();
                                           console.log(readPH.val());
                                           });
-      
-
 }
 if(read =="t"){
       PH.innerHTML="none"   
