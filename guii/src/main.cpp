@@ -216,8 +216,9 @@ void dieukhien();
 
 //get data firebase 
 void getdatafirebase();
+void manaul();
 
-int auto_man;
+String auto_man1;
 int id;
 
 
@@ -276,6 +277,12 @@ void guiTask(void *pvParameters)
   ledcWrite(10, 768);
   Blynk.config(auth, "iot.htpro.vn", 8080);
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  
+  // strem call
+
+
+  // 
+  
   // Serial.begin(9600); /* prepare for possible serial debug */
 
   //readeeprom();
@@ -384,10 +391,10 @@ void readdata(void *pvParameters)
 
     if (millis() - last >= 1000)
     {
-      testrandom();
-         uart();
-        dieukhien();
-        
+     // testrandom();
+        // uart();
+       // dieukhien();
+        getdatafirebase();
   // Blynk.syncVirtual(V1);
   // Blynk.syncVirtual(V0);
   // Blynk.syncVirtual(V2);
@@ -1224,22 +1231,7 @@ static void slider_event_as(lv_obj_t *slider, lv_event_t event)
     Blynk.virtualWrite(V2, buf_as);
   }
 }
-static void checkblynk()
-{
-  if (!Blynk.connected())
-  {
-    Serial.println("Lost connection");
-    if (Blynk.connect())
-    {
-      Serial.println("Reconnected");
-      Blynk.syncAll();
-    }
-    else
-    {
-      Serial.println("Not reconnected");
-    }
-  }
-}
+
 void uart()
 {
   StaticJsonBuffer<1000> jsonBuffer;
@@ -1295,26 +1287,21 @@ void dieukhien(){
 
 // get data firebase 
 void getdatafirebase(){
- if (Firebase.getInt(firebaseData, "auto_man")) {
-
-    if (firebaseData.dataType() == "int") {
-     auto_man = firebaseData.intData();// bien kiem tra che do la auto hay man 0 la man 1 la out
-    }
-
-  } 
-   if (Firebase.getInt(firebaseData, "id")) {
-
-    if (firebaseData.dataType() == "int") {
-     id = firebaseData.intData();//kiem tra xem la loai cay nao 
-    }
-
-  } 
-  else {
+if (Firebase.getString(firebaseData, "auto_man")) {
+  if (firebaseData.dataType() == "string") {
+    auto_man1 = firebaseData.stringData();
+        Serial.println(auto_man1);
+      }
+    
+ 
+}
+else {
     Serial.println(firebaseData.errorReason());
   }
+ manaul();
 }
 void manaul(){
-  if(auto_man == 0 && id == 1){
+  if(auto_man1.toInt() == 0 ){
     Serial.print("Dau tay");
   }
 }
