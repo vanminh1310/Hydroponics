@@ -219,7 +219,9 @@ void getdatafirebase();
 void manaul();
 
 String auto_man1;
-int id;
+String id;
+int max_tem,min_tem,max_da,min_da,ans,doph,ndn;
+
 
 
 void wifi()
@@ -395,9 +397,7 @@ void readdata(void *pvParameters)
         // uart();
        // dieukhien();
         getdatafirebase();
-  // Blynk.syncVirtual(V1);
-  // Blynk.syncVirtual(V0);
-  // Blynk.syncVirtual(V2);
+
       last = millis();
     }
 
@@ -1292,16 +1292,97 @@ if (Firebase.getString(firebaseData, "auto_man")) {
     auto_man1 = firebaseData.stringData();
         Serial.println(auto_man1);
       }
-    
- 
+}
+if (Firebase.getString(firebaseData, "id")) {
+  if (firebaseData.dataType() == "string") {
+    id = firebaseData.stringData();
+        Serial.println(id);
+      }
+}
+//get nhiet do max 
+if (Firebase.getInt(firebaseData, "man/max_t")) {
+  if (firebaseData.dataType() == "int") {
+    max_tem = firebaseData.intData();
+        Serial.print("max_tem: ");
+        Serial.println(max_tem);
+        Blynk.virtualWrite(V1, max_tem);
+      }
+}
+// min tem
+if (Firebase.getInt(firebaseData, "man/min_t")) {
+  if (firebaseData.dataType() == "int") {
+    min_tem = firebaseData.intData();
+        Serial.print("min_tem: ");
+        Serial.println(min_tem);
+      }
+}
+//max_ do am 
+if (Firebase.getInt(firebaseData, "man/max_da")) {
+  if (firebaseData.dataType() == "int") {
+    max_da = firebaseData.intData();
+        Serial.print("max_da: ");
+        Serial.println(max_da);
+        Blynk.virtualWrite(V0, max_da);
+      }
+}
+//min da 
+if (Firebase.getInt(firebaseData, "man/min_da")) {
+  if (firebaseData.dataType() == "int") {
+    min_da = firebaseData.intData();
+        Serial.print("min_da: ");
+        Serial.println(min_da);
+      }
+}
+// anh sang 
+if (Firebase.getString(firebaseData, "man/as")) {
+  if (firebaseData.dataType() == "string") {
+   String qans = firebaseData.stringData();
+        Serial.print("ans: ");
+        Serial.println(ans);
+        Blynk.virtualWrite(V2, qans);
+      }
 }
 else {
     Serial.println(firebaseData.errorReason());
   }
- manaul();
+ if(auto_man1.toInt() == 0){
+     manaul();
+  }
+
 }
 void manaul(){
-  if(auto_man1.toInt() == 0 ){
-    Serial.print("Dau tay");
+  // che do dieu khien thu cong 
+  int abc = random(1,100);
+  Serial.print("random: ");
+  Serial.println(abc);
+  if (abc>=max_tem) // nd123
+  {
+    Serial.println("bat quat lam mat");
+
   }
+  else if(abc<min_tem){
+    Serial.println("bat relay tang nhiet do");
+  }
+  else if(min_tem<abc||max_tem>abc){
+       Serial.println("tat relay");
+  }
+ //do am  
+
+  if (abc>=max_da) // nd123
+  {
+    Serial.println("bat quat giam do am ");
+
+  }
+  else if(abc<min_da||max_da>abc){
+    Serial.println("bat bom tang do am ");
+  }
+  else if(min_da<abc){
+       Serial.println("tat relay");
+  }
+  // anh sang 
+  Serial2.println(ans);
+  Serial.println("thay doi gia tri anh sang bang pwm");
+
+  
+ 
 }
