@@ -1277,7 +1277,7 @@ void dieukhien(){
   }
   else{
      Serial.println("demo1");
-       Serial2.println("a");
+     Serial2.println("a");
   }
   
 }

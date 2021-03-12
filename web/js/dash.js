@@ -341,19 +341,31 @@ automan.on('value',function(automan){
       firebase.database().ref().child("auto_man").set("0");
     }
   }
-  // 
+  // max slider 
   var slider = document.getElementById("myRange");
   var s_h = document.getElementById("slider_h");
   var s_nd_n = document.getElementById("slider_nd_n");
   var s_nd = document.getElementById("slider_n_d");
   var s_as = document.getElementById("slider_s");
+// min slider
+var min_da = document.getElementById('slider_d_a_min')
+var min_as = document.getElementById('slider_a_s_min')
+var min_nd = document.getElementById('slider_n_d_min')
 
-
+// max innerHTML
 var output = document.getElementById("demo");
 var output_da = document.getElementById("demo_da");
 var output_nd = document.getElementById("demo_nd");
 var output_ndn = document.getElementById("demo_ndn");
 var output_as = document.getElementById("demo_as");
+// min innerHTML
+var output_min_as = document.getElementById("demo_as_min")
+var output_min_nd = document.getElementById("demo_nd_min")
+var output_min_da = document.getElementById("demo_da_min")
+
+output_min_as.innerHTML = min_as.value
+output_min_da.innerHTML = min_da.value
+output_min_nd.innerHTML= min_nd.value
 
 output.innerHTML = slider.value;
 output_da.innerHTML = s_h.value
@@ -439,6 +451,22 @@ s_nd_n.oninput = function() {
 s_h.oninput = function() {
   output_da.innerHTML = this.value;
   firebase.database().ref().child("man/da").set(this.value);
+
+}
+
+min_da.oninput = function() {
+  output_min_da.innerHTML = this.value;
+  //firebase.database().ref().child("man/da").set(this.value);
+
+}
+min_nd.oninput = function() {
+  output_min_nd.innerHTML = this.value;
+ // firebase.database().ref().child("man/da").set(this.value);
+
+}
+min_as.oninput = function() {
+  output_min_as.innerHTML = this.value;
+ // firebase.database().ref().child("man/da").set(this.value);
 
 }
 

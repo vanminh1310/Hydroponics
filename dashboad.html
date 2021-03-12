@@ -113,10 +113,19 @@
                 <div class="gauge__cover_da"></div>
               </div>
               <h6>Độ ẩm</h6>
+        
               <div id="slider_da" class="slidecontainer">
+                <h6>Max</h6>  
                 <input type="range" min="1" max="100" value="3" class="slider" id="slider_h">
                 <p><span id="demo_da"></span></p>
               </div>
+              <!-- day la min -->
+              <div id="slider_d_min" class="slidecontainer"> 
+                <h6>Min</h6>
+                <input type="range" min="1" max="100" value="3" class="slider" id="slider_d_a_min">
+                <p><span id="demo_da_min"></span></p>
+              </div>
+<!--  -->
             </div>
             <div class="gauge_as">
               <div class="gauge__body">
@@ -124,10 +133,19 @@
                 <div class="gauge__cover_as"></div>
               </div>
               <h6>Ánh sáng </h6>
+             
               <div id="slider_as" class="slidecontainer">
+                <h6>Max</h6>
                 <input type="range" min="1" max="255" value="3" class="slider" id="slider_s">
                 <p><span id="demo_as"></span></p>
               </div>
+              <!-- day la min -->
+              <div id="slider_a_min" class="slidecontainer"> 
+                <h6>Min</h6>
+                <input type="range" min="1" max="100" value="3" class="slider" id="slider_a_s_min">
+                <p><span id="demo_as_min"></span></p>
+              </div>
+
             </div>
             <div class="gauge_ndn">
               <div class="gauge__body">
@@ -135,10 +153,12 @@
                 <div class="gauge__cover_ndn"></div>
               </div>
               <h6>Nhiệt độ nước</h6>
+
               <div id="slider_ndn" class="slidecontainer">
                 <input type="range" min="1" max="100" value="3" class="slider" id="slider_nd_n">
                 <p><span id="demo_ndn"></span></p>
               </div>
+
             </div>
             <div class="gauge_nd">
               <div class="gauge__body">
@@ -148,15 +168,17 @@
               <h6>Nhiệt độ</h6>
               <div id="slider_nd" class="slidecontainer"> 
 
-                <h5 style=" margin-top: 5vh;">Max</h5>
+                <h6>Max</h6>
                 <input type="range" min="1" max="100" value="3" class="slider" id="slider_n_d">
                 <p><span id="demo_nd"></span></p>
               </div>
-              <div id="slider_nd" class="slidecontainer"> 
-                <h5>Min</h5>
-                <input type="range" min="1" max="100" value="3" class="slider" id="slider_n_d">
-                <p><span id="demo_nd"></span></p>
+              <!--day la min  -->
+              <div id="slider_n_min" class="slidecontainer"> 
+                <h6>Min</h6>
+                <input type="range" min="1" max="100" value="3" class="slider" id="slider_n_d_min">
+                <p><span id="demo_nd_min"></span></p>
               </div>
+
             </div>
 
           </div>
