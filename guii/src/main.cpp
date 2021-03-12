@@ -1382,6 +1382,8 @@ void manaul(){
   // anh sang 
   Serial2.println(ans);
   Serial.println("thay doi gia tri anh sang bang pwm");
+  // do ph 
+  
 
   
  
