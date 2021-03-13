@@ -1,2 +1,20 @@
 AC:67:B2:0A:6C:FC master
 24:62:AB:F9:46:84 cl
+2.1
+vi điều khiển...
+tìm hiểu firebase
+tìm hiểu firebase datbase
+sóng wifi
+Nền tảng blynk 
+2.2 bộ điều khiển 
+esp 32
+Arduino nano 
+- các linh kiện khác 
+  cảm biến dht11 
+  cảm biến nhiệt độ ds18b20
+  lcd tft 2.8inh(spi)
+  Cảm Biến Cường Độ Sáng GY-30
+
+
+
+ 
