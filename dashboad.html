@@ -79,11 +79,15 @@
                 <div class="gauge__cover1"></div>
               </div>
               <h6>Nhiệt độ</h6>
+              <div id="slider_nd_pin" class="slidecontainer">
+                <input type="range" min="1" max="100" value="3" class="slider" id="slider_n_pin">
+                <p><span id="demo_ndn_pin"></span></p>
+              </div>
             </div>
 
 
           </div>
-          <button onclick="window.open('dashboad.html','_self')" class="btn_auto">Làm mát pin</button>
+          <!-- <button onclick="window.open('dashboad.html','_self')" class="btn_auto">Làm mát pin</button> -->
     </div>
     <div class="KR">
       <h5 style="color: dodgerblue;">Khoang trồng rau<h5>
@@ -187,7 +191,7 @@
 
     <div class="BC">
       <span>Biểu đồ thống kê</span>
-      <canvas id="myChart12" width="90%" height="18vh"></canvas>
+      <canvas id="line-chart" width="2000" height="450"></canvas>
 
     </div>
 
@@ -212,6 +216,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+  
   <script src="/web/js/dash.js"></script>
 
 </body>

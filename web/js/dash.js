@@ -308,6 +308,9 @@ automan.on('value',function(automan){
     document.getElementById('slider_da').style.display='none'
     document.getElementById('slider_as').style.display='none'
     document.getElementById('slider_ph').style.display='none'
+    document.getElementById('slider_d_min').style.display='none'
+    document.getElementById('slider_a_min').style.display='none'
+    document.getElementById('slider_n_min').style.display='none'
   }
   if(automan.val()==0){
     console.log("man")
@@ -321,6 +324,9 @@ automan.on('value',function(automan){
     document.getElementById('slider_da').style.display='block'
     document.getElementById('slider_as').style.display='block'
     document.getElementById('slider_ph').style.display='block'
+    document.getElementById('slider_d_min').style.display='block'
+    document.getElementById('slider_a_min').style.display='block'
+    document.getElementById('slider_n_min').style.display='block'
   }
   });
 
@@ -347,6 +353,16 @@ automan.on('value',function(automan){
   var s_nd_n = document.getElementById("slider_nd_n");
   var s_nd = document.getElementById("slider_n_d");
   var s_as = document.getElementById("slider_s");
+  // SLIDER ndnlmt
+  var ndnlmt = document.getElementById("slider_n_pin")
+  var output_nlmt = document.getElementById("demo_ndn_pin")
+  output_nlmt.innerHTML = ndnlmt.value
+
+  ndnlmt.oninput = function() {
+    output_nlmt.innerHTML = this.value;
+    firebase.database().ref().child("man/ndpin").set(this.value);
+  
+  }
 // min slider
 var min_da = document.getElementById('slider_d_a_min')
 var min_as = document.getElementById('slider_a_s_min')
@@ -387,12 +403,11 @@ output_as.innerHTML = s_as.value
 
 
 
-var as_man = firebase.database().ref().child("man/as")
+var as_man = firebase.database().ref().child("man/max_as")
     as_man.on('value',function(as_man){
       // AS.innerHTML=as_man.val();
       var test = as_man.val();
       output_as.innerHTML = as_man.val()
-      
       console.log(as_man.val());
       });
 
@@ -405,7 +420,7 @@ var as_man = firebase.database().ref().child("man/as")
         console.log(nd_n.val());
         });
 
-        var nd_t = firebase.database().ref().child("man/nd")
+        var nd_t = firebase.database().ref().child("man/max_t")
     nd_t.on('value',function(nd_t){
       // AS.innerHTML=nd_t.val();
       var test = nd_t.val();
@@ -414,7 +429,7 @@ var as_man = firebase.database().ref().child("man/as")
       console.log(nd_t.val());
       });
 
-      var dam = firebase.database().ref().child("man/da")
+      var dam = firebase.database().ref().child("man/max_da")
     dam.on('value',function(dam){
       // AS.innerHTML=dam.val();
       var test = dam.val();
@@ -422,6 +437,33 @@ var as_man = firebase.database().ref().child("man/as")
       
       console.log(dam.val());
       });
+
+      var dam_min = firebase.database().ref().child("man/min_da")
+      dam_min.on('value',function(dam_min){
+        // AS.innerHTML=dam_min.val();
+        var test = dam_min.val();
+        output_min_da.innerHTML = dam_min.val()
+        
+        console.log(dam_min.val());
+        });
+
+        var min_nd1 = firebase.database().ref().child("man/min_t")
+        min_nd1.on('value',function(min_nd1){
+          // AS.innerHTML=min_nd1.val();
+          var test = min_nd1.val();
+          output_min_nd.innerHTML = min_nd1.val()
+          
+          console.log(min_nd1.val());
+          });
+
+          var min_as1 = firebase.database().ref().child("man/min_as")
+          min_as1.on('value',function(min_as1){
+            // AS.innerHTML=min_as1.val();
+            var test = min_as1.val();
+            output_min_as.innerHTML = min_as1.val()
+            
+            console.log(min_as1.val());
+            });
 
 
 
@@ -435,12 +477,12 @@ slider.oninput = function() {
 
 s_as.oninput = function() {
   output_as.innerHTML = this.value;
-  firebase.database().ref().child("man/as").set(this.value);
+  firebase.database().ref().child("man/max_as").set(this.value);
 
 }
 s_nd.oninput = function() {
   output_nd.innerHTML = this.value;
-  firebase.database().ref().child("man/nd").set(this.value);
+  firebase.database().ref().child("man/max_t").set(this.value);
 
 }
 s_nd_n.oninput = function() {
@@ -450,23 +492,23 @@ s_nd_n.oninput = function() {
 }
 s_h.oninput = function() {
   output_da.innerHTML = this.value;
-  firebase.database().ref().child("man/da").set(this.value);
+  firebase.database().ref().child("man/max_da").set(this.value);
 
 }
 
 min_da.oninput = function() {
   output_min_da.innerHTML = this.value;
-  //firebase.database().ref().child("man/da").set(this.value);
+  firebase.database().ref().child("man/min_da").set(this.value);
 
 }
 min_nd.oninput = function() {
   output_min_nd.innerHTML = this.value;
- // firebase.database().ref().child("man/da").set(this.value);
+ firebase.database().ref().child("man/min_t").set(this.value);
 
 }
 min_as.oninput = function() {
   output_min_as.innerHTML = this.value;
- // firebase.database().ref().child("man/da").set(this.value);
+  firebase.database().ref().child("man/min_as").set(this.value);
 
 }
 
@@ -474,40 +516,32 @@ min_as.oninput = function() {
 
 
 
-var ctx = document.getElementById('myChart12').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
+new Chart(document.getElementById("line-chart"), {
+  type: 'line',
+  data: {
+    labels:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+    datasets: [{ 
+        data: [86,114,106,106,107,111,133,221,783,2478],
+        label: "Nhiệt độ",
+        borderColor: "#3e95cd",
+        fill: false
+      }, { 
+        data: [282,350,411,502,635,809,947,1402,3700,5267],
+        label: "Độ ẩm",
+        borderColor: "#8e5ea2",
+        fill: false
+      }, { 
+        data: [168,170,178,190,203,276,408,547,675,734],
+        label: "Điện Năng",
+        borderColor: "#3cba9f",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'World population per region (in millions)'
     }
+  }
 });
