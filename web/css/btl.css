@@ -50,7 +50,7 @@ body{
 @media screen and (max-width: 767px) {
     .from-a {
         width: 90%;
-        height: 80vh;
+        height: 100vh;
         margin-left: 6%;
         
     }
@@ -59,10 +59,10 @@ body{
     }
   }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 350px) {
     .from-a {
         width: 90%;
-        height: 90vh;
+        height: 100vh;
         margin-left: 6%;
         
     }
