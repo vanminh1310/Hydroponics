@@ -16,6 +16,7 @@ body{
     font-family: monaco,Consolas,Lucida Console,monospace; 
 }
 .btn_all {
+    
 	box-shadow: 0px 0px 0px 0px #f0f7fa;
 	background-color:transparent;
 	border-radius:10px;
@@ -30,6 +31,7 @@ body{
 	text-decoration:none;
 	text-shadow:-1px 2px 0px  #f0f7fa;
     margin-top: 10px;
+  
 }
 .btn_all:hover {
 	background-color:transparent;
