@@ -62,11 +62,11 @@ body{
   @media screen and (max-width: 350px) {
     .from-a {
         width: 90%;
-        height: 100vh;
+        height: 150vh;
         margin-left: 6%;
         
     }
     .nd{
-        margin-left: 25vw;
+        margin-left: 20vw;
     }
   }
