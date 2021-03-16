@@ -1,0 +1,35 @@
+Change Component Designator: OldDesignator=JP NewDesignator=JP1
+Change Component Designator: OldDesignator=U? NewDesignator=U1
+Added Pin To Net: NetName=NetJP1_1 Pin=JP1-1
+Added Pin To Net: NetName=NetJP1_1 Pin=JP1-8
+Added Pin To Net: NetName=NetJP1_1 Pin=U1-1
+Added Net: Name=NetJP1_1
+Added Pin To Net: NetName=NetJP1_2 Pin=JP1-2
+Added Pin To Net: NetName=NetJP1_2 Pin=U1-20
+Added Net: Name=NetJP1_2
+Added Pin To Net: NetName=NetJP1_3 Pin=JP1-3
+Added Pin To Net: NetName=NetJP1_3 Pin=U1-35
+Added Net: Name=NetJP1_3
+Added Pin To Net: NetName=NetJP1_4 Pin=JP1-4
+Added Pin To Net: NetName=NetJP1_4 Pin=U1-34
+Added Net: Name=NetJP1_4
+Added Pin To Net: NetName=NetJP1_5 Pin=JP1-5
+Added Pin To Net: NetName=NetJP1_5 Pin=U1-32
+Added Net: Name=NetJP1_5
+Added Pin To Net: NetName=NetJP1_6 Pin=JP1-6
+Added Pin To Net: NetName=NetJP1_6 Pin=JP1-12
+Added Pin To Net: NetName=NetJP1_6 Pin=U1-21
+Added Net: Name=NetJP1_6
+Added Pin To Net: NetName=NetJP1_7 Pin=JP1-7
+Added Pin To Net: NetName=NetJP1_7 Pin=JP1-10
+Added Pin To Net: NetName=NetJP1_7 Pin=U1-28
+Added Net: Name=NetJP1_7
+Added Pin To Net: NetName=NetJP1_11 Pin=JP1-11
+Added Pin To Net: NetName=NetJP1_11 Pin=U1-25
+Added Net: Name=NetJP1_11
+Added Pin To Net: NetName=NetJP1_13 Pin=JP1-13
+Added Pin To Net: NetName=NetJP1_13 Pin=U1-27
+Added Net: Name=NetJP1_13
+Added Member To Class: ClassName=Sodonguyenly Member=Component JP1 JP
+Added Member To Class: ClassName=Sodonguyenly Member=Component U1 ESP32-DEVKITC-32D
+Added Room: Name=Sodonguyenly
