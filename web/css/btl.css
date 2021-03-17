@@ -52,7 +52,7 @@ body{
 @media screen and (max-width: 767px) {
     .from-a {
         width: 90%;
-        height: 100vh;
+        height: 90vh;
         margin-left: 6%;
         
     }
