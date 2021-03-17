@@ -93,7 +93,7 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_RIGHT50 u
 // };
 
 // xoa bo het may cai cham o dau ddi 
-const lv_img_dsc_t right50 = {
+const lv_img_dsc_t right50 ={
 LV_IMG_CF_INDEXED_4BIT,
 0,
 2,// phai co cai nay moi chay 

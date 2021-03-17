@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 #include <DS18B20.h>
-SoftwareSerial s(5, 6);
+SoftwareSerial s(6, 5);
 DS18B20 ds(8);
 long last = 0;
  int led = 12; 
